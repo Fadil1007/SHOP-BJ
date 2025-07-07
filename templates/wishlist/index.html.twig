@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Favoris - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h1 class="mb-4">Mes Favoris</h1>
+    
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+    {% endfor %}
+    
+    {% if wishlistItems|length > 0 %}
+        <div class="row">
+            {% for item in wishlistItems %}
+                {% set product = item.product %}
+                <div class="col-md-3 mb-4 wishlist-item" data-wishlist-id="{{ item.id }}">
+                    <div class="card h-100">
+                        {% if product.imageFilename %}
+                            <a href="{{ path('product_show', {'id': product.id}) }}">
+                                <img src="{{ asset(product.imageFilename) }}" alt="{{ product.name }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            </a>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">
+                                <a href="{{ path('product_show', {'id': product.id}) }}" class="text-decoration-none text-dark">
+                                    {{ product.name }}
+                                </a>
+                            </h5>
+                            <p class="card-text mb-2">
+                                {% if product.shortDescription %}
+                                    {{ product.shortDescription|striptags|slice(0, 80) }}{% if product.shortDescription|length > 80 %}...{% endif %}
+                                {% endif %}
+                            </p>
+                            <div class="product-price mt-auto">
+                                {% if product.onSale and product.oldPrice %}
+                                    <span class="old-price">{{ product.oldPrice|format_fcfa }}</span>
+                                    <span class="price">{{ product.price|format_fcfa }}</span>
+                                    <span class="discount-badge">-{{ product.discountPercentage }}%</span>
+                                {% else %}
+                                    <span class="price">{{ product.price|format_fcfa }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="wishlist-actions mt-3 d-flex justify-content-between">
+                                <a href="{{ path('product_show', {'id': product.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i> Voir détails
+                                </a>
+                                <form action="{{ path('wishlist_remove', {'id': product.id}) }}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger remove-from-wishlist" title="Retirer des favoris" data-product-id="{{ product.id }}">
+                                        <i class="fas fa-heart-broken"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <p>Vous n'avez pas encore de produits dans vos favoris.</p>
+            <a href="{{ path('product_index') }}" class="btn btn-primary mt-3">
+                <i class="fas fa-shopping-bag me-2"></i>Découvrir nos produits
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation pour les suppressions
+    const removeButtons = document.querySelectorAll('.remove-from-wishlist');
+    
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const productId = this.getAttribute('data-product-id');
+            const wishlistItem = this.closest('.wishlist-item');
+            const form = this.closest('form');
+            
+            // Animation de suppression
+            wishlistItem.style.transition = 'opacity 0.5s ease';
+            wishlistItem.style.opacity = '0';
+            
+            setTimeout(() => {
+                // Soumettre le formulaire après l'animation
+                form.submit();
+            }, 500);
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

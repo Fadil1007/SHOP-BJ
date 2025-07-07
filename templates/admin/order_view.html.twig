@@ -1,0 +1,353 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails commande #{{ order.id }} - Administration SHOP BJ{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-menu {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .admin-menu a {
+        display: block;
+        padding: 8px 15px;
+        margin-bottom: 5px;
+        color: #495057;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    .admin-menu a:hover, .admin-menu a.active {
+        background: #e9ecef;
+        color: #007bff;
+    }
+    .admin-menu a i {
+        width: 20px;
+        text-align: center;
+        margin-right: 8px;
+    }
+    .admin-header {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .order-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .status-new {
+        background-color: #0dcaf0;
+        color: white;
+    }
+    .status-processing {
+        background-color: #6c757d;
+        color: white;
+    }
+    .status-shipped {
+        background-color: #198754;
+        color: white;
+    }
+    .status-delivered {
+        background-color: #0d6efd;
+        color: white;
+    }
+    .status-cancelled {
+        background-color: #dc3545;
+        color: white;
+    }
+    .order-timeline {
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 20px;
+    }
+    .order-timeline::before {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: #ced4da;
+    }
+    .timeline-item {
+        position: relative;
+        padding-bottom: 15px;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -30px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #6c757d;
+    }
+    .timeline-date {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="admin-header">
+        <h1>Détails de la commande #{{ order.id }}</h1>
+        <p>Gestion des détails et du statut</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="admin-menu">
+                <h5 class="mb-3">Menu principal</h5>
+                <a href="{{ path('admin_index') }}"><i class="fa fa-home"></i> Tableau de bord</a>
+                <a href="{{ path('admin_products') }}"><i class="fa fa-tshirt"></i> Produits</a>
+                <a href="{{ path('admin_categories') }}"><i class="fa fa-list"></i> Catégories</a>
+                <a href="{{ path('admin_orders') }}" class="active"><i class="fa fa-shopping-cart"></i> Commandes</a>
+                <a href="{{ path('admin_users') }}"><i class="fa fa-users"></i> Utilisateurs</a>
+                <a href="{{ path('app_home') }}"><i class="fa fa-arrow-left"></i> Retour au site</a>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="mb-4">
+                <a href="{{ path('admin_orders') }}" class="btn btn-outline-primary">
+                    <i class="fa fa-arrow-left"></i> Retour aux commandes
+                </a>
+                <a href="{{ path('admin_order_edit', {'id': order.id}) }}" class="btn btn-primary">
+                    <i class="fa fa-edit"></i> Modifier
+                </a>
+                <a href="{{ path('admin_order_invoice', {'id': order.id}) }}" class="btn btn-secondary">
+                    <i class="fa fa-file-pdf"></i> Facture
+                </a>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrderModal">
+                    <i class="fa fa-trash"></i> Supprimer
+                </button>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Informations commande</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Référence :</th>
+                                    <td>{{ order.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Date :</th>
+                                    <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Statut :</th>
+                                    <td>
+                                        <span class="order-status status-{{ order.status }}">
+                                            {% if order.status == 'new' %}
+                                                Nouvelle
+                                            {% elseif order.status == 'processing' %}
+                                                En traitement
+                                            {% elseif order.status == 'shipped' %}
+                                                Expédiée
+                                            {% elseif order.status == 'delivered' %}
+                                                Livrée
+                                            {% elseif order.status == 'cancelled' %}
+                                                Annulée
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Paiement :</th>
+                                    <td>
+                                        {% if order.paymentMethod == 'stripe' %}
+                                            Carte bancaire (Stripe)
+                                        {% elseif order.paymentMethod == 'kkiapay' %}
+                                            Mobile Money (KKiaPay)
+                                        {% else %}
+                                            {{ order.paymentMethod|default('Non spécifié') }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Total :</th>
+                                    <td>{{ order.total|format_currency('XOF') }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Informations client</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Nom :</th>
+                                    <td>{{ order.user.firstName }} {{ order.user.lastName }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email :</th>
+                                    <td>{{ order.user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Téléphone :</th>
+                                    <td>
+                                        {% if order.phone %}
+                                            {{ order.phone }}
+                                        {% elseif order.user.phoneNumber %}
+                                            {{ order.user.phoneNumber }}
+                                        {% else %}
+                                            <span class="text-muted">Non disponible</span>
+                                            <a href="{{ path('admin_admin_user_edit', {'id': order.user.id}) }}" class="ms-2 btn btn-sm btn-outline-primary">
+                                                <i class="fa fa-edit"></i> Modifier le profil
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Adresse :</th>
+                                    <td>
+                                        {{ order.address|default('') }}<br>
+                                        {{ order.postalCode|default('') }} {{ order.city|default('') }}<br>
+                                        {{ order.country|default('') }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Articles commandés</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Quantité</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.orderItems %}
+                                    <tr>
+                                        <td>
+                                            {% if item.product %}
+                                                <a href="{{ path('product_show', {'id': item.product.id}) }}" target="_blank">
+                                                    {{ item.product.name }}
+                                                </a>
+                                            {% else %}
+                                                Produit supprimé
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ item.price|format_fcfa }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>{{ (item.price * item.quantity)|format_fcfa }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">Sous-total:</th>
+                                    <td>{{ order.total|format_fcfa }}</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3" class="text-end">Livraison:</th>
+                                    <td>À vos charges</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3" class="text-end">Total:</th>
+                                    <td><strong>{{ order.total|format_currency('XOF') }}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Historique de la commande</h5>
+                </div>
+                <div class="card-body">
+                    <div class="order-timeline">
+                        <div class="timeline-item">
+                            <p class="mb-0 fw-bold">Commande créée</p>
+                            <p class="timeline-date">{{ order.createdAt|date('d/m/Y H:i') }}</p>
+                        </div>
+                        
+                        {% if order.status != 'new' %}
+                            <div class="timeline-item">
+                                <p class="mb-0 fw-bold">Commande en traitement</p>
+                                <p class="timeline-date">{{ order.updatedAt|date('d/m/Y H:i') }}</p>
+                            </div>
+                        {% endif %}
+                        
+                        {% if order.status == 'shipped' or order.status == 'delivered' %}
+                            <div class="timeline-item">
+                                <p class="mb-0 fw-bold">Commande expédiée</p>
+                                <p class="timeline-date">{{ order.updatedAt|date('d/m/Y H:i') }}</p>
+                            </div>
+                        {% endif %}
+                        
+                        {% if order.status == 'delivered' %}
+                            <div class="timeline-item">
+                                <p class="mb-0 fw-bold">Commande livrée</p>
+                                <p class="timeline-date">{{ order.updatedAt|date('d/m/Y H:i') }}</p>
+                            </div>
+                        {% endif %}
+                        
+                        {% if order.status == 'cancelled' %}
+                            <div class="timeline-item">
+                                <p class="mb-0 fw-bold">Commande annulée</p>
+                                <p class="timeline-date">{{ order.updatedAt|date('d/m/Y H:i') }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteOrderModal" tabindex="-1" aria-labelledby="deleteOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteOrderModalLabel">Confirmation de suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer définitivement la commande #{{ order.id }} ?</p>
+                <p class="text-danger"><strong>Attention :</strong> Cette action est irréversible et toutes les données associées à cette commande seront perdues.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form method="post" action="{{ path('admin_order_delete', {'id': order.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
+                    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

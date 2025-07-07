@@ -1,0 +1,612 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    {% if app.request.get('debug') %}
+    <div class="alert alert-info mb-4">
+        <h6>Informations de débogage</h6>
+        <ul class="mb-0">
+            <li>ID Produit: {{ product.id }}</li>
+            <li>Image 1: {{ product.imageFilename ? product.imageFilename : 'NON DÉFINIE' }}</li>
+            <li>Image 2: {{ product.imageFilename2 ? product.imageFilename2 : 'NON DÉFINIE' }}</li>
+            <li>Image 3: {{ product.imageFilename3 ? product.imageFilename3 : 'NON DÉFINIE' }}</li>
+            <li>Image 4: {{ product.imageFilename4 ? product.imageFilename4 : 'NON DÉFINIE' }}</li>
+            <li>Tailles: {{ product.sizes is empty ? 'Aucune' : product.sizes|join(', ') }}</li>
+            <li>Couleurs: {{ product.colors is empty ? 'Aucune' : product.colors|join(', ') }}</li>
+            <li>Total images: {% set totalImages = 0 %}{% if product.imageFilename %}{% set totalImages = totalImages + 1 %}{% endif %}{% if product.imageFilename2 %}{% set totalImages = totalImages + 1 %}{% endif %}{% if product.imageFilename3 %}{% set totalImages = totalImages + 1 %}{% endif %}{% if product.imageFilename4 %}{% set totalImages = totalImages + 1 %}{% endif %}{{ totalImages }}</li>
+        </ul>
+    </div>
+    {% endif %}
+
+
+    {# Fil d'Ariane #}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('product_index') }}">Produits</a></li>
+            {% if product.category %}
+                <li class="breadcrumb-item"><a href="{{ path('category_show', {'id': product.category.id}) }}">{{ product.category.name }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-5">
+        {# Image du Produit #}
+        <div class="col-md-6">
+            <div class="product-image-container">
+                {% set hasImages = product.imageFilename or product.imageFilename2 or product.imageFilename3 or product.imageFilename4 %}
+
+                {% if hasImages %}
+                    {# Image principale - afficher la première image disponible #}
+                    {% set mainImageSrc = product.imageFilename %}
+                    {% if not mainImageSrc and product.imageFilename2 %}
+                        {% set mainImageSrc = product.imageFilename2 %}
+                    {% endif %}
+                    {% if not mainImageSrc and product.imageFilename3 %}
+                        {% set mainImageSrc = product.imageFilename3 %}
+                    {% endif %}
+                    {% if not mainImageSrc and product.imageFilename4 %}
+                        {% set mainImageSrc = product.imageFilename4 %}
+                    {% endif %}
+
+                    {% if mainImageSrc %}
+                        <div class="main-image mb-3">
+                            <a href="{{ asset(mainImageSrc) }}" data-lightbox="product-gallery" data-title="{{ product.name }}">
+                                <img src="{{ asset(mainImageSrc) }}" alt="{{ product.name }}" class="img-fluid rounded shadow main-product-image" id="main-product-image" style="width: 100%; max-width: 500px; height: 400px; object-fit: contain; background-color: #f8f9fa; margin: 0 auto; display: block;">
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    {# Compteur pour vérifier le nombre total d'images #}
+                    {% set totalImages = 0 %}
+                    {% if product.imageFilename %}{% set totalImages = totalImages + 1 %}{% endif %}
+                    {% if product.imageFilename2 %}{% set totalImages = totalImages + 1 %}{% endif %}
+                    {% if product.imageFilename3 %}{% set totalImages = totalImages + 1 %}{% endif %}
+                    {% if product.imageFilename4 %}{% set totalImages = totalImages + 1 %}{% endif %}
+
+                    {# Afficher les miniatures seulement s'il y a plus d'une image #}
+                    {% if totalImages > 1 %}
+                        <div class="additional-images d-flex flex-wrap gap-2 mt-3">
+                            {% if product.imageFilename %}
+                                <div class="thumbnail-image" data-image-number="1">
+                                    <img src="{{ asset(product.imageFilename) }}" alt="{{ product.name }} - Image 1" class="img-fluid rounded thumbnail-clickable" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 3px solid {% if mainImageSrc == product.imageFilename %}#007bff{% else %}#dee2e6{% endif %};" data-main-image="{{ asset(product.imageFilename) }}" title="Image 1">
+                                </div>
+                            {% endif %}
+
+                            {% if product.imageFilename2 %}
+                                <div class="thumbnail-image" data-image-number="2">
+                                    <img src="{{ asset(product.imageFilename2) }}" alt="{{ product.name }} - Image 2" class="img-fluid rounded thumbnail-clickable" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 3px solid {% if mainImageSrc == product.imageFilename2 %}#007bff{% else %}#dee2e6{% endif %};" data-main-image="{{ asset(product.imageFilename2) }}" title="Image 2">
+                                </div>
+                            {% endif %}
+
+                            {% if product.imageFilename3 %}
+                                <div class="thumbnail-image" data-image-number="3">
+                                    <img src="{{ asset(product.imageFilename3) }}" alt="{{ product.name }} - Image 3" class="img-fluid rounded thumbnail-clickable" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 3px solid {% if mainImageSrc == product.imageFilename3 %}#007bff{% else %}#dee2e6{% endif %};" data-main-image="{{ asset(product.imageFilename3) }}" title="Image 3">
+                                </div>
+                            {% endif %}
+
+                            {% if product.imageFilename4 %}
+                                <div class="thumbnail-image" data-image-number="4">
+                                    <img src="{{ asset(product.imageFilename4) }}" alt="{{ product.name }} - Image 4" class="img-fluid rounded thumbnail-clickable" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 3px solid {% if mainImageSrc == product.imageFilename4 %}#007bff{% else %}#dee2e6{% endif %};" data-main-image="{{ asset(product.imageFilename4) }}" title="Image 4">
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-2 text-muted small text-center">
+                            Cliquez sur les miniatures pour changer l'image principale ({{ totalImages }} images disponibles)
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="product-placeholder d-flex align-items-center justify-content-center bg-light rounded shadow" style="height: 400px;">
+                        <i class="fas fa-image fa-4x text-secondary"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Détails du Produit #}
+        <div class="col-md-6">
+            <h1 class="mb-3">{{ product.name }}</h1>
+
+            {# Prix en FCFA #}
+            <div class="product-price mb-4">
+                {% if product.onSale and product.oldPrice %}
+                    <span class="old-price" style="text-decoration: line-through !important; color: #dc3545 !important; text-decoration-color: #dc3545 !important; text-decoration-thickness: 2px !important;">{{ product.oldPrice|format_fcfa }}</span>
+                    <span class="price text-success fw-bold">{{ product.price|format_fcfa }}</span>
+                    <span class="discount-badge badge bg-danger">-{{ product.discountPercentage|round }}%</span>
+                {% else %}
+                    <span class="price">{{ product.price|format_fcfa }}</span>
+                {% endif %}
+            </div>
+
+            {# Description Courte #}
+            {% if product.shortDescription %}
+                <div class="product-short-description mb-4">
+                    <p>{{ product.shortDescription }}</p>
+                </div>
+            {% endif %}
+
+            {# Tailles #}
+            {% if product.sizes|length > 0 %}
+                <div class="product-sizes mb-4">
+                    <h5 class="mb-2">Tailles <span class="text-danger">*</span></h5>
+                    <div class="btn-group" role="group" aria-label="Tailles disponibles">
+                        {% for size in product.sizes %}
+                            <input type="radio" class="btn-check size-option" name="size" id="size-{{ size }}" value="{{ size }}" autocomplete="off" required>
+                            <label class="btn btn-outline-secondary me-2" for="size-{{ size }}">{{ size }}</label>
+                        {% endfor %}
+                    </div>
+                    {% if app.request.get('debug') %}
+                    <div class="mt-2 text-secondary">
+                        <small>Debug - Tailles disponibles: {{ product.sizes|join(', ') }}</small>
+                    </div>
+                    {% endif %}
+                    <div class="invalid-feedback size-feedback d-none mt-2">
+                        Veuillez sélectionner une taille
+                    </div>
+                </div>
+            {% endif %}
+
+            {# Couleurs #}
+            {% if product.colors|length > 0 %}
+                <div class="product-colors mb-4">
+                    <h5 class="mb-2">Couleurs <span class="text-danger">*</span></h5>
+                    <div class="btn-group" role="group" aria-label="Couleurs disponibles">
+                        {% for color in product.colors %}
+                            <input type="radio" class="btn-check color-option" name="color" id="color-{{ loop.index }}" value="{{ color }}" autocomplete="off" required>
+                            <label class="btn btn-outline-secondary me-2" for="color-{{ loop.index }}">
+                                <span class="btn-color-swatch color-swatch-{{ color }}"></span>{{ color|capitalize }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {% if app.request.get('debug') %}
+                    <div class="mt-2 text-secondary">
+                        <small>Debug - Couleurs disponibles: {{ product.colors|join(', ') }}</small>
+                    </div>
+                    {% endif %}
+                    <div class="invalid-feedback color-feedback d-none mt-2">
+                        Veuillez sélectionner une couleur
+                    </div>
+                </div>
+            {% endif %}
+
+            {# Message d'alerte pour options requises #}
+            <div class="options-alert alert alert-info mb-3 {% if product.sizes|length == 0 and product.colors|length == 0 %}d-none{% endif %}">
+                <i class="fas fa-info-circle me-2"></i>
+                {% if product.sizes|length > 0 and product.colors|length > 0 %}
+                    Veuillez sélectionner une taille et une couleur avant d'ajouter ce produit au panier.
+                {% elseif product.sizes|length > 0 %}
+                    Veuillez sélectionner une taille avant d'ajouter ce produit au panier.
+                {% elseif product.colors|length > 0 %}
+                    Veuillez sélectionner une couleur avant d'ajouter ce produit au panier.
+                {% endif %}
+            </div>
+
+            {# Notification d'erreur pour la validation #}
+            <div id="options-error" class="alert alert-danger mb-3 d-none">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span id="error-message">Veuillez sélectionner toutes les options requises avant d'ajouter au panier.</span>
+            </div>
+
+            {# Quantité et Bouton d'Ajout au Panier #}
+            <div class="d-flex align-items-center mb-4">
+                <div class="quantity-selector me-3">
+                    <button class="btn btn-sm btn-secondary" id="decrease-quantity">-</button>
+                    <input type="number" value="1" min="1" max="{{ product.stock }}" id="product-quantity" class="form-control mx-2" style="width: 60px;">
+                    <button class="btn btn-sm btn-secondary" id="increase-quantity">+</button>
+                </div>
+
+                <div class="d-flex mb-3">
+                    <button class="btn btn-primary product-add-to-cart me-2" data-product-id="{{ product.id }}">
+                        <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                    </button>
+                    <button class="btn btn-outline-danger add-to-wishlist {% if isInWishlist %}active{% endif %}" data-product-id="{{ product.id }}" title="{{ isInWishlist ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
+                        <i class="bi {% if isInWishlist %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                    </button>
+                </div>
+            </div>
+
+            {# Disponibilité #}
+            <div class="product-availability mb-4">
+                {% if product.stock > 10 %}
+                    <p class="text-success"><i class="fas fa-check-circle me-2"></i>En stock</p>
+                {% elseif product.stock > 0 %}
+                    <p class="text-warning"><i class="fas fa-exclamation-circle me-2"></i>Plus que {{ product.stock }} en stock</p>
+                {% else %}
+                    <p class="text-danger"><i class="fas fa-times-circle me-2"></i>Rupture de stock</p>
+                {% endif %}
+            </div>
+
+            {# Détails Supplémentaires #}
+            <div class="product-details mb-4">
+                <ul class="list-unstyled">
+                    <li><strong>Référence:</strong> {{ product.sku ?? 'N/A' }}</li>
+                    <li><strong>Catégorie:</strong> {{ product.category.name ?? 'Non catégorisé' }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {# Onglets: Description, etc. #}
+    <div class="row mb-5">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Description</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">Avis ({{ reviews|length }})</button>
+                </li>
+            </ul>
+            <div class="tab-content p-4 border border-top-0" id="productTabsContent">
+                <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    {% if product.description %}
+                        {{ product.description|raw }}
+                    {% else %}
+                        <p>Aucune description disponible pour ce produit.</p>
+                    {% endif %}
+                </div>
+
+                <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                    {% if reviews|length > 0 %}
+                        <div class="reviews-container mb-4">
+                            {% for review in reviews %}
+                                <div class="review-item card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="card-title mb-0">{{ review.title }}</h5>
+                                            <div class="review-rating">
+                                                {% for i in 1..5 %}
+                                                    {% if i <= review.rating %}
+                                                        <i class="fas fa-star text-warning"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star text-warning"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            Par {{ review.user.firstname ~ ' ' ~ review.user.lastname }} 
+                                            le {{ review.createdAt|date('d/m/Y') }}
+                                        </h6>
+                                        <p class="card-text">{{ review.comment }}</p>
+
+                                        {% if is_granted('ROLE_USER') and app.user == review.user %}
+                                            <div class="d-flex justify-content-end">
+                                                <a href="{{ path('app_review_delete', {'id': review.id}) }}" 
+                                                   class="btn btn-sm btn-outline-danger" 
+                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')">
+                                                    <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-center py-3">Aucun avis pour ce produit.</p>
+                    {% endif %}
+
+                    <div class="review-actions mt-4">
+                        {% if is_granted('ROLE_USER') %}
+                            <a href="{{ path('app_review_new', {'productId': product.id}) }}" class="btn btn-outline-primary">
+                                <i class="fas fa-pen me-1"></i> Écrire un avis
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-sign-in-alt me-1"></i> Connectez-vous pour écrire un avis
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Produits Similaires #}
+    <section class="mb-5">
+        <h2 class="text-center mb-4">VOUS POURRIEZ AUSSI AIMER</h2>
+        <div class="row">
+            {% for similar in similarProducts %}
+                {% if similar.id != product.id %}
+                    <div class="col-md-3 mb-4">
+                        {% include 'components/product_card.html.twig' with {'product': similar} %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>Aucun produit similaire disponible.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+/* Styles pour la galerie d'images */
+.product-image-container img:hover {
+    opacity: 0.9;
+}
+
+/* Image principale avec transition fluide */
+.main-product-image {
+    transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.main-product-image:hover {
+    transform: scale(1.02);
+}
+
+/* Styles pour les miniatures */
+.thumbnail-clickable {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.thumbnail-clickable:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    opacity: 0.8;
+}
+
+.additional-images {
+    min-height: 80px;
+}
+
+.thumbnail-image {
+    position: relative;
+}
+
+.thumbnail-image::after {
+    content: attr(data-image-number);
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Style pour le modal d'image plein écran */
+.modal-fullscreen-image .modal-body {
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-fullscreen-image .modal-content {
+    background-color: transparent;
+    border: none;
+}
+
+.modal-fullscreen-image img {
+    max-width: 100%;
+    max-height: 90vh;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Styles pour lightbox */
+.lightbox-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow: auto;
+}
+
+.lightbox-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.lightbox-image {
+    max-width: 90%;
+    max-height: 90vh;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1055;
+}
+
+.lightbox-title {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 0;
+}
+</style>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+// Script pour la galerie d'images produit - version isolée
+(function() {
+    'use strict';
+
+    // Attendre que le DOM soit complètement chargé
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initProductGallery);
+    } else {
+        initProductGallery();
+    }
+
+    function initProductGallery() {
+        console.log('=== INITIALISATION GALERIE PRODUIT ===');
+
+        // ===== GALERIE D'IMAGES =====
+        const mainImage = document.getElementById('main-product-image');
+        const thumbnailImages = document.querySelectorAll('.thumbnail-clickable');
+
+        console.log('Image principale trouvée:', !!mainImage);
+        console.log('Nombre de miniatures trouvées:', thumbnailImages.length);
+
+        // Gestion des clics sur les miniatures
+        thumbnailImages.forEach((thumb, index) => {
+            console.log(`Miniature ${index + 1}:`, {
+                src: thumb.src,
+                dataMainImage: thumb.getAttribute('data-main-image'),
+                title: thumb.title
+            });
+
+            thumb.addEventListener('click', function(e) {
+                e.preventDefault();
+                const newImageSrc = this.getAttribute('data-main-image');
+
+                console.log('=== CLIC SUR MINIATURE ===');
+                console.log('Nouvelle image source:', newImageSrc);
+
+                if (mainImage && newImageSrc) {
+                    // Mettre à jour l'image principale avec animation
+                    mainImage.style.opacity = '0.5';
+
+                    setTimeout(() => {
+                        mainImage.src = newImageSrc;
+                        mainImage.alt = this.alt;
+                        mainImage.style.opacity = '1';
+
+                        // Mettre à jour le lien du lightbox si présent
+                        const lightboxLink = mainImage.parentElement;
+                        if (lightboxLink && lightboxLink.tagName === 'A') {
+                            lightboxLink.href = newImageSrc;
+                            lightboxLink.setAttribute('data-title', this.alt);
+                        }
+
+                        // Mettre à jour les bordures - toutes en gris sauf celle cliquée
+                        thumbnailImages.forEach(t => {
+                            t.style.border = '3px solid #dee2e6';
+                        });
+                        this.style.border = '3px solid #007bff';
+
+                        console.log('✓ Image principale mise à jour vers:', newImageSrc);
+                        console.log('✓ Bordure active mise à jour pour:', this.title);
+                    }, 150);
+                } else {
+                    console.error('❌ Erreur: Image principale ou source manquante');
+                }
+            });
+        });
+
+        // ===== GESTION DU PANIER (version simplifiée) =====
+        initProductCart();
+
+        // ===== DEBUG FINAL =====
+        console.log('=== INFORMATIONS PRODUIT ===');
+        console.log('Images disponibles:');
+        console.log('- Image 1:', '{{ product.imageFilename ? asset(product.imageFilename) : "NON DÉFINIE" }}');
+        console.log('- Image 2:', '{{ product.imageFilename2 ? asset(product.imageFilename2) : "NON DÉFINIE" }}');
+        console.log('- Image 3:', '{{ product.imageFilename3 ? asset(product.imageFilename3) : "NON DÉFINIE" }}');
+        console.log('- Image 4:', '{{ product.imageFilename4 ? asset(product.imageFilename4) : "NON DÉFINIE" }}');
+        console.log('✓ Galerie d\'images initialisée');
+    }
+
+    function initProductCart() {
+        const quantityInput = document.getElementById('product-quantity');
+        const decreaseBtn = document.getElementById('decrease-quantity');
+        const increaseBtn = document.getElementById('increase-quantity');
+        const addToCartBtn = document.querySelector('.product-add-to-cart');
+        const sizeOptions = document.querySelectorAll('.size-option');
+        const colorOptions = document.querySelectorAll('.color-option');
+
+        // Variables locales pour les sélections
+        let localSelectedSize = null;
+        let localSelectedColor = null;
+
+        // Gestion de la quantité
+        if (decreaseBtn) {
+            decreaseBtn.addEventListener('click', function() {
+                let value = parseInt(quantityInput.value);
+                if (value > 1) {
+                    quantityInput.value = value - 1;
+                }
+            });
+        }
+
+        if (increaseBtn) {
+            increaseBtn.addEventListener('click', function() {
+                let value = parseInt(quantityInput.value);
+                let max = parseInt(quantityInput.getAttribute('max'));
+                if (value < max) {
+                    quantityInput.value = value + 1;
+                }
+            });
+        }
+
+        // Gestion des sélections de taille
+        sizeOptions.forEach(option => {
+            option.addEventListener('change', function(e) {
+                localSelectedSize = e.target.value;
+                console.log('Taille sélectionnée:', localSelectedSize);
+            });
+        });
+
+        // Gestion des sélections de couleur
+        colorOptions.forEach(option => {
+            option.addEventListener('change', function(e) {
+                localSelectedColor = e.target.value;
+                console.log('Couleur sélectionnée:', localSelectedColor);
+            });
+        });
+
+        // Gestion ajout au panier
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const quantity = parseInt(quantityInput.value) || 1;
+                const productId = {{ product.id }};
+
+                // Utiliser la fonction globale addToCart si elle existe
+                if (typeof window.addToCart === 'function') {
+                    window.addToCart(productId, quantity, localSelectedSize, localSelectedColor);
+                } else {
+                    console.log('Fonction addToCart non trouvée, ajout direct...');
+                    // Fallback simple
+                    alert('Produit ajouté au panier !');
+                }
+            });
+        }
+
+        // Gestion wishlist
+        const wishlistBtn = document.querySelector('.add-to-wishlist');
+        if (wishlistBtn) {
+            wishlistBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                console.log('Ajout à la wishlist:', productId);
+            });
+        }
+    }
+})();
+</script>
+{% endblock %}
+{% endblock %}

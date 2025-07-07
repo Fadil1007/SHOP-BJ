@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Controller\Admin;
+
+use App\Entity\Product;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+
+class ProductCrudController extends AbstractCrudController
+{
+    public static function getEntityFqcn(): string
+    {
+        return Product::class;
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Produit')
+            ->setEntityLabelInPlural('Produits')
+            ->setSearchFields(['name', 'description', 'sku'])
+            ->setDefaultSort(['createdAt' => 'DESC'])
+            ->setPageTitle('index', 'Liste des produits')
+            ->setPageTitle('new', 'Ajouter un produit')
+            ->setPageTitle('edit', 'Modifier le produit')
+            ->setPageTitle('detail', 'Détails du produit');
+    }
+
+    public function configureFields(string $pageName): iterable
+    {
+        $fields = [
+            IdField::new('id')->hideOnForm(),
+            TextField::new('name', 'Nom'),
+            TextField::new('sku', 'Référence'),
+        ];
+        
+        // N'ajouter la catégorie que s'il n'y a pas d'erreur
+        if (class_exists('App\Entity\Category')) {
+            $fields[] = AssociationField::new('category', 'Catégorie');
+        }
+        
+        $fields = array_merge($fields, [
+            MoneyField::new('price', 'Prix')->setCurrency('EUR'),
+            MoneyField::new('oldPrice', 'Prix original')->setCurrency('EUR')->hideOnIndex(),
+            BooleanField::new('onSale', 'En solde'),
+            NumberField::new('discountPercentage', 'Réduction (%)')->hideOnIndex(),
+            NumberField::new('stock', 'Stock'),
+            BooleanField::new('isActive', 'Actif'),
+            TextareaField::new('shortDescription', 'Description courte')->hideOnIndex(),
+            TextEditorField::new('description', 'Description complète')->hideOnIndex(),
+        ]);
+        
+        // Gérer séparément les champs qui peuvent causer des problèmes
+        if ($pageName === Crud::PAGE_DETAIL || $pageName === Crud::PAGE_EDIT || $pageName === Crud::PAGE_NEW) {
+            $fields[] = ArrayField::new('sizes', 'Tailles');
+            $fields[] = ArrayField::new('colors', 'Couleurs');
+        }
+        
+        $fields[] = ImageField::new('imageFilename', 'Image')
+            ->setBasePath('uploads/products')
+            ->setUploadDir('public/uploads/products')
+            ->setUploadedFileNamePattern('[randomhash].[extension]')
+            ->setRequired(false);
+        
+        $fields[] = TextField::new('imageName', 'Nom de l\'image')->hideOnIndex();
+        $fields[] = BooleanField::new('featured', 'Mis en avant');
+        
+        if ($pageName === Crud::PAGE_INDEX || $pageName === Crud::PAGE_DETAIL) {
+            $fields[] = DateTimeField::new('createdAt', 'Créé le');
+            $fields[] = DateTimeField::new('updatedAt', 'Modifié le')->setFormTypeOption('disabled', true);
+        }
+        
+        return $fields;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_EDIT, Action::SAVE_AND_ADD_ANOTHER);
+    }
+}

@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% if is_edit %}Modifier l'utilisateur{% else %}Nouvel utilisateur{% endif %} - Administration SHOP BJ{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-menu {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .admin-menu a {
+        display: block;
+        padding: 8px 15px;
+        margin-bottom: 5px;
+        color: #495057;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    .admin-menu a:hover, .admin-menu a.active {
+        background: #e9ecef;
+        color: #007bff;
+    }
+    .admin-menu a i {
+        width: 20px;
+        text-align: center;
+        margin-right: 8px;
+    }
+    .admin-header {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="admin-header">
+        <h1>{% if is_edit %}Modifier l'utilisateur{% else %}Nouvel utilisateur{% endif %}</h1>
+        <p>{% if is_edit %}Modifier les informations d'un utilisateur existant{% else %}Ajouter un nouvel utilisateur à la plateforme{% endif %}</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="admin-menu">
+                <h5 class="mb-3">Menu principal</h5>
+                <a href="{{ path('admin_index') }}"><i class="fa fa-home"></i> Tableau de bord</a>
+                <a href="{{ path('admin_products') }}"><i class="fa fa-tshirt"></i> Produits</a>
+                <a href="{{ path('admin_categories') }}"><i class="fa fa-list"></i> Catégories</a>
+                <a href="{{ path('admin_orders') }}"><i class="fa fa-shopping-cart"></i> Commandes</a>
+                <a href="{{ path('admin_users') }}" class="active"><i class="fa fa-users"></i> Utilisateurs</a>
+                <a href="{{ path('app_home') }}"><i class="fa fa-arrow-left"></i> Retour au site</a>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    {% if is_edit %}
+                        <h5 class="card-title mb-0">Modifier l'utilisateur {{ user.firstName }} {{ user.lastName }}</h5>
+                    {% else %}
+                        <h5 class="card-title mb-0">Informations du nouvel utilisateur</h5>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.firstName) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.lastName) }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.email) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.username) }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.phoneNumber) }}
+                    </div>
+                    {% if is_edit %}
+                        {{ form_row(form.newPassword) }}
+                    {% else %}
+                        {{ form_row(form.plainPassword) }}
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        {{ form_row(form.roles) }}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('admin_users') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary">
+                            {% if is_edit %}
+                                <i class="fa fa-save"></i> Enregistrer les modifications
+                            {% else %}
+                                <i class="fa fa-plus"></i> Créer l'utilisateur
+                            {% endif %}
+                        </button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

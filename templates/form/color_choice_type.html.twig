@@ -1,0 +1,23 @@
+{% block choice_widget_expanded %}
+    <div {{ block('widget_container_attributes') }}>
+        {% for child in form %}
+            <div class="form-check">
+                {{- form_widget(child, {
+                    parent_label_class: label_attr.class|default(''),
+                    translation_domain: choice_translation_domain,
+                    valid: valid,
+                }) -}}
+                
+                {% set color_value = child.vars.value %}
+                <label class="form-check-label" for="{{ child.vars.id }}">
+                    <span class="admin-color-swatch color-swatch-{{ color_value }}"></span>
+                    {{ child.vars.label|trans({}, choice_translation_domain) }}
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block checkbox_widget %}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{% endblock %}

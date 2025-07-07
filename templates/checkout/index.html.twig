@@ -1,0 +1,175 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement - {{ site_name }}{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Finaliser votre commande</h1>
+
+    <div class="row">
+        <div class="col-lg-7 mb-4 mb-lg-0">
+            {# Checkout Form #}
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Informations de commande</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(checkout_form) }}
+                    {{ form_errors(checkout_form) }}
+                    {{ form_widget(checkout_form._token) }}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form_row(checkout_form.lastName) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(checkout_form.firstName) }}
+                        </div>
+                        <div class="col-12">
+                            {{ form_row(checkout_form.city) }}
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                {{ form_label(checkout_form.phone) }}
+                                <div class="input-group">
+                                    <span class="input-group-text">+229</span>
+                                    {{ form_widget(checkout_form.phone, {'attr': {'class': 'form-control', 'id': 'phone', 'placeholder': 'XXXXXXXXXX', 'data-phone-pattern': '+229', 'maxlength': '10', 'pattern': '[0-9]*', 'inputmode': 'numeric', 'onkeypress': 'return event.charCode >= 48 && event.charCode <= 57'}}) }}
+                                </div>
+                                {{ form_errors(checkout_form.phone) }}
+                                <small class="form-text text-muted">Format attendu: +229 suivi de 10 chiffres</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Payment Method #}
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Méthode de paiement</h5>
+                </div>
+                <div class="card-body">
+                    <div class="payment-methods">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_method" id="paymentFedaPay" value="FedaPay" checked>
+                            <label class="form-check-label" for="paymentFedaPay">
+                                <i class="fas fa-credit-card me-2"></i>
+                                FedaPay (Mobile Money, Carte bancaire, etc.)
+                            </label>
+                        </div>
+                        <input type="hidden" name="selected_payment_method" id="selectedPaymentMethod" value="FedaPay">
+
+                        <div class="payment-info mb-4">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Vous pourrez procéder au paiement sécurisé après avoir validé votre commande.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                        Confirmer la commande
+                    </button>
+                    {{ form_end(checkout_form, {'render_rest': false}) }}
+
+                    <div class="payment-security mt-4">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <i class="fas fa-lock me-2"></i>
+                            <span class="small">Paiement 100% sécurisé</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            {# Order Summary #}
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Récapitulatif de commande</h5>
+                </div>
+                <div class="card-body">
+                    <div class="order-items mb-4">
+                        {% for item in cart_items %}
+                            <div class="order-item d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="order-item-image me-3">
+                                        {% if item.product.imageFilename %}
+                                            <img src="{{ asset(item.product.imageFilename) }}" alt="{{ item.product.name }}" class="img-fluid" width="60">
+                                        {% else %}
+                                            <div class="product-placeholder-img d-flex align-items-center justify-content-center bg-light rounded" style="width: 60px; height: 60px;">
+                                                <i class="fas fa-tshirt text-secondary"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ item.product.name }}</h6>
+                                        <div class="small text-muted">
+                                            {% if item.size %}Taille: {{ item.size }}{% endif %}
+                                            {% if item.color %}{% if item.size %} - {% endif %}Couleur: {{ item.color }}{% endif %}
+                                        </div>
+                                        <div class="small text-muted">
+                                            Quantité: {{ item.quantity }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fw-bold">
+                                    {{ (item.product.price * item.quantity)|format_fcfa }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <hr>
+
+                    <div class="order-total">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Sous-total</span>
+                            <span>{{ total|format_fcfa }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Livraison</span>
+                            <span>À vos charges</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-0">
+                            <span class="fw-bold">Total</span>
+                            <span class="fw-bold fs-5">
+                                {{ total|format_fcfa }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Format le numéro de téléphone
+    const phoneInput = document.getElementById('phone');
+
+    if (phoneInput) {
+        // Afficher l'indicatif +229 comme préfixe visuel dans un label
+        const prefixLabel = document.createElement('div');
+        prefixLabel.innerHTML = '<strong>+229</strong>';
+        prefixLabel.className = 'phone-prefix-label mb-1';
+
+        // Insérer le label avant le champ
+        phoneInput.parentNode.insertBefore(prefixLabel, phoneInput);
+
+        // N'autoriser que les chiffres lors de la saisie
+        phoneInput.addEventListener('input', function(e) {
+            // Supprimer tout ce qui n'est pas un chiffre
+            this.value = this.value.replace(/\D/g, '');
+        });
+    }
+
+    // Gestion de la méthode de paiement FedaPay
+    const selectedPaymentMethodInput = document.getElementById('selectedPaymentMethod');
+    // Assurer que FedaPay est sélectionné par défaut
+    selectedPaymentMethodInput.value = 'FedaPay';
+});
+</script>
+{% endblock %}

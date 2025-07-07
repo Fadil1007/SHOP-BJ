@@ -1,0 +1,31 @@
+/* Ajustements responsifs pour SHOP BJ */
+
+/* Correction des images et cartes pour mobile */
+@media (max-width: 767.98px) {
+    /* Ajustements généraux pour les cartes produits */
+    .product-card .card-img-top {
+        height: 150px !important;
+    }
+    
+    /* Réduction de la taille des textes pour mieux s'adapter */
+    .product-card .card-title {
+        font-size: 0.9rem;
+    }
+    
+    .product-card .card-text {
+        font-size: 0.8rem;
+    }
+    
+    /* Ajustement des boutons */
+    .product-card .btn-sm {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* Ajustements pour les très petits écrans */
+@media (max-width: 575.98px) {
+    .product-card .card-img-top {
+        height: 120px !important;
+    }
+}

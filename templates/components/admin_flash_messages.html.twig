@@ -1,0 +1,30 @@
+
+{% if admin_flash_messages is defined and admin_flash_messages|length > 0 %}
+    <div id="admin-flash-messages" class="admin-flash-messages">
+        {% for message in admin_flash_messages %}
+            <div class="alert alert-{{ message.type }} alert-dismissible fade show admin-flash-message" role="alert" data-message-id="{{ message.id }}">
+                {% if message.title %}
+                    <strong>{{ message.title }}</strong><br>
+                {% endif %}
+                {{ message.message|raw }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <style>
+    .admin-flash-messages {
+        position: relative;
+        z-index: 1040;
+    }
+    
+    .admin-flash-message {
+        margin-bottom: 0.5rem;
+        border-left: 4px solid currentColor;
+    }
+    
+    .admin-flash-message:last-child {
+        margin-bottom: 1rem;
+    }
+    </style>
+{% endif %}

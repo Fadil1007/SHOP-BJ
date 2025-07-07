@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement réussi | SHOP BJ{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .success-icon {
+            font-size: 64px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .order-success {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 30px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        .success-container {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        .order-details {
+            margin-top: 30px;
+            border-top: 1px solid #dee2e6;
+            padding-top: 20px;
+        }
+        .next-steps {
+            margin-top: 30px;
+        }
+        .next-step-button {
+            margin: 10px 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <main class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                            <li class="breadcrumb-item"><a href="{{ path('cart_index') }}">Panier</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Paiement réussi</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            
+            <div class="order-success">
+                <div class="success-container">
+                    <div class="success-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h2>Paiement effectué avec succès !</h2>
+                    <p class="lead">Merci pour votre commande. Votre paiement a été confirmé.</p>
+                    <p>Un email de confirmation a été envoyé à <strong>{{ order.email }}</strong></p>
+                    
+                    <div class="order-details">
+                        <h4>Récapitulatif de votre commande #{{ order.id }}</h4>
+                        <div class="row mt-4">
+                            <div class="col-md-6 text-md-right">
+                                <p><strong>Date :</strong> {{ order.createdAt|date('d/m/Y à H:i') }}</p>
+                                <p><strong>Méthode de paiement :</strong> {{ order.paymentMethod }}</p>
+                                <p><strong>Total :</strong> {{ order.total|number_format(0, '', ' ') }} FCFA</p>
+                            </div>
+                            <div class="col-md-6 text-md-left">
+                                <p><strong>Nom :</strong> {{ order.fullName }}</p>
+                                <p><strong>Téléphone :</strong> {{ order.phone }}</p>
+                                <p><strong>Ville :</strong> {{ order.city }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="next-steps">
+                        <h5>Que souhaitez-vous faire maintenant ?</h5>
+                        <div class="d-flex justify-content-center flex-wrap">
+                            <a href="{{ path('app_home') }}" class="btn btn-primary next-step-button">
+                                <i class="bi bi-house"></i> Retour à l'accueil
+                            </a>
+                            <a href="{{ path('app_profile_orders') }}" class="btn btn-secondary next-step-button">
+                                <i class="bi bi-list-check"></i> Voir mes commandes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

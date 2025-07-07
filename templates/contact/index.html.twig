@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - {{ site_name }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4 text-center">Contactez-nous</h1>
+            
+            <div class="card shadow-sm mb-5">
+                <div class="card-body p-lg-5">
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    
+                    {% if messageSent %}
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-check-circle text-success fa-4x"></i>
+                            </div>
+                            <h3 class="mb-3">Message envoyé avec succès!</h3>
+                            <p class="text-muted mb-4">Merci de nous avoir contactés. Notre équipe vous répondra dans les plus brefs délais.</p>
+                            <a href="{{ path('app_home') }}" class="btn btn-primary">Retour à l'accueil</a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-4">Nous sommes là pour répondre à toutes vos questions. Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais à l'adresse email que vous indiquez.</p>
+                        <p class="small text-info mb-4"><i class="fas fa-info-circle me-1"></i> Votre message sera envoyé directement à notre équipe à <strong>shopbj04@gmail.com</strong>.</p>
+                        
+                        {{ form_start(contactForm) }}
+                            <div class="mb-3">
+                                {{ form_label(contactForm.nom) }}
+                                {{ form_widget(contactForm.nom) }}
+                                <div class="form-error">
+                                    {{ form_errors(contactForm.nom) }}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form_label(contactForm.email) }}
+                                {{ form_widget(contactForm.email) }}
+                                <div class="form-error">
+                                    {{ form_errors(contactForm.email) }}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form_label(contactForm.sujet) }}
+                                {{ form_widget(contactForm.sujet) }}
+                                <div class="form-error">
+                                    {{ form_errors(contactForm.sujet) }}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                {{ form_label(contactForm.message) }}
+                                {{ form_widget(contactForm.message) }}
+                                <div class="form-error">
+                                    {{ form_errors(contactForm.message) }}
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-paper-plane me-2"></i>Envoyer le message
+                                </button>
+                            </div>
+                        {{ form_end(contactForm) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-phone-alt text-primary fa-3x mb-3"></i>
+                    <h5 class="card-title">Téléphone</h5>
+                    <p class="card-text text-muted">
+                        +229 01 62 97 68 12<br>
+                        Du lundi au samedi, 9h-18h
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-envelope text-primary fa-3x mb-3"></i>
+                    <h5 class="card-title">Email</h5>
+                    <p class="card-text text-muted">
+                        shopbj04@gmail.com<br>
+                        <span class="small">(Nous répondons sous 24-48h)</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="ratio ratio-21x9">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63690.86500254911!2d2.345504379101567!3d6.368578899999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1023550db4c84b9b%3A0x8b01cb0d5085fab8!2sStade%20de%20l&#39;Amiti%C3%A9%20G%C3%A9n%C3%A9ral%20Mathieu%20K%C3%A9r%C3%A9kou!5e0!3m2!1sfr!2sbj!4v1712033992214!5m2!1sfr!2sbj" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

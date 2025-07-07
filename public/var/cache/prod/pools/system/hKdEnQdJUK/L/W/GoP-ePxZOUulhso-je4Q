@@ -1,0 +1,101 @@
+<?php //b4ddd787dd39aff76c442f38d6a9208d
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Doctrine\\ORM\\Query\\ParserResult'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ParserResult')),
+        clone ($p['Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer')),
+        clone ($p['Doctrine\\ORM\\Query\\ResultSetMapping'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ResultSetMapping')),
+    ],
+    null,
+    [
+        'Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer' => [
+            'sql' => [
+                1 => 'SELECT c0_.id AS id_0, c0_.name AS name_1, c0_.slug AS slug_2, c0_.description AS description_3, c0_.image_filename AS image_filename_4, c0_.header_image_filename AS header_image_filename_5, c0_.featured AS featured_6, c0_.parent_id AS parent_id_7 FROM category c0_ WHERE c0_.id IN (?)',
+            ],
+        ],
+        'stdClass' => [
+            'aliasMap' => [
+                2 => [
+                    'e' => 'App\\Entity\\Category',
+                ],
+            ],
+            'fieldMappings' => [
+                2 => [
+                    'id_0' => 'id',
+                    'name_1' => 'name',
+                    'slug_2' => 'slug',
+                    'description_3' => 'description',
+                    'image_filename_4' => 'imageFilename',
+                    'header_image_filename_5' => 'headerImageFilename',
+                    'featured_6' => 'featured',
+                ],
+            ],
+            'columnAliasMappings' => [
+                2 => [
+                    'App\\Entity\\Category' => [
+                        'e' => [
+                            'id' => 'id_0',
+                            'name' => 'name_1',
+                            'slug' => 'slug_2',
+                            'description' => 'description_3',
+                            'imageFilename' => 'image_filename_4',
+                            'headerImageFilename' => 'header_image_filename_5',
+                            'featured' => 'featured_6',
+                        ],
+                    ],
+                ],
+            ],
+            'typeMappings' => [
+                2 => [
+                    'parent_id_7' => 'integer',
+                ],
+            ],
+            'entityMappings' => [
+                2 => [
+                    'e' => null,
+                ],
+            ],
+            'metaMappings' => [
+                2 => [
+                    'parent_id_7' => 'parent_id',
+                ],
+            ],
+            'columnOwnerMap' => [
+                2 => [
+                    'id_0' => 'e',
+                    'name_1' => 'e',
+                    'slug_2' => 'e',
+                    'description_3' => 'e',
+                    'image_filename_4' => 'e',
+                    'header_image_filename_5' => 'e',
+                    'featured_6' => 'e',
+                    'parent_id_7' => 'e',
+                ],
+            ],
+            'declaringClasses' => [
+                2 => [
+                    'id_0' => 'App\\Entity\\Category',
+                    'name_1' => 'App\\Entity\\Category',
+                    'slug_2' => 'App\\Entity\\Category',
+                    'description_3' => 'App\\Entity\\Category',
+                    'image_filename_4' => 'App\\Entity\\Category',
+                    'header_image_filename_5' => 'App\\Entity\\Category',
+                    'featured_6' => 'App\\Entity\\Category',
+                ],
+            ],
+        ],
+    ],
+    $o[0],
+    [
+        [
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlExecutor' => null,
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlFinalizer' => $o[1],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'resultSetMapping' => $o[2],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'parameterMappings' => [
+                'ORMQueryBuilderLoader_getEntitiesByIds_id' => [
+                    0,
+                ],
+            ],
+        ],
+    ]
+); }];

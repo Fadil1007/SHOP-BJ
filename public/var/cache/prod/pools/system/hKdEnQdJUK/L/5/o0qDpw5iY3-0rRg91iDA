@@ -1,0 +1,104 @@
+<?php //c19d4fa2415be39fd6912988ba6dfd87
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Doctrine\\ORM\\Query\\ParserResult'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ParserResult')),
+        clone ($p['Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer')),
+        clone ($p['Doctrine\\ORM\\Query\\ResultSetMapping'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ResultSetMapping')),
+    ],
+    null,
+    [
+        'Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer' => [
+            'sql' => [
+                1 => 'SELECT f0_.id AS id_0, f0_.title AS title_1, f0_.message AS message_2, f0_.type AS type_3, f0_.is_active AS is_active_4, f0_.created_at AS created_at_5, f0_.start_date AS start_date_6, f0_.end_date AS end_date_7, f0_.target_pages AS target_pages_8 FROM flash_message f0_ WHERE f0_.is_active = ? AND (f0_.target_pages = ? OR f0_.target_pages = ?) ORDER BY f0_.created_at DESC',
+            ],
+        ],
+        'stdClass' => [
+            'aliasMap' => [
+                2 => [
+                    'f' => 'App\\Entity\\FlashMessage',
+                ],
+            ],
+            'fieldMappings' => [
+                2 => [
+                    'id_0' => 'id',
+                    'title_1' => 'title',
+                    'message_2' => 'message',
+                    'type_3' => 'type',
+                    'is_active_4' => 'isActive',
+                    'created_at_5' => 'createdAt',
+                    'start_date_6' => 'startDate',
+                    'end_date_7' => 'endDate',
+                    'target_pages_8' => 'targetPages',
+                ],
+            ],
+            'columnAliasMappings' => [
+                2 => [
+                    'App\\Entity\\FlashMessage' => [
+                        'f' => [
+                            'id' => 'id_0',
+                            'title' => 'title_1',
+                            'message' => 'message_2',
+                            'type' => 'type_3',
+                            'isActive' => 'is_active_4',
+                            'createdAt' => 'created_at_5',
+                            'startDate' => 'start_date_6',
+                            'endDate' => 'end_date_7',
+                            'targetPages' => 'target_pages_8',
+                        ],
+                    ],
+                ],
+            ],
+            'entityMappings' => [
+                2 => [
+                    'f' => null,
+                ],
+            ],
+            'columnOwnerMap' => [
+                2 => [
+                    'id_0' => 'f',
+                    'title_1' => 'f',
+                    'message_2' => 'f',
+                    'type_3' => 'f',
+                    'is_active_4' => 'f',
+                    'created_at_5' => 'f',
+                    'start_date_6' => 'f',
+                    'end_date_7' => 'f',
+                    'target_pages_8' => 'f',
+                ],
+            ],
+            'declaringClasses' => [
+                2 => [
+                    'id_0' => 'App\\Entity\\FlashMessage',
+                    'title_1' => 'App\\Entity\\FlashMessage',
+                    'message_2' => 'App\\Entity\\FlashMessage',
+                    'type_3' => 'App\\Entity\\FlashMessage',
+                    'is_active_4' => 'App\\Entity\\FlashMessage',
+                    'created_at_5' => 'App\\Entity\\FlashMessage',
+                    'start_date_6' => 'App\\Entity\\FlashMessage',
+                    'end_date_7' => 'App\\Entity\\FlashMessage',
+                    'target_pages_8' => 'App\\Entity\\FlashMessage',
+                ],
+            ],
+        ],
+    ],
+    $o[0],
+    [
+        [
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlExecutor' => null,
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlFinalizer' => $o[1],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'resultSetMapping' => $o[2],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'parameterMappings' => [
+                'active' => [
+                    0,
+                ],
+                'targetPage' => [
+                    1,
+                ],
+                'all' => [
+                    2,
+                ],
+            ],
+        ],
+    ]
+); }];

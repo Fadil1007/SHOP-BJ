@@ -1,0 +1,3 @@
+<?php //App%255CController%255CDebugController%2523scanDirectory
+
+return [PHP_INT_MAX, []];

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ message_title }} - SHOP BJ{% endblock %}
+
+{% block body %}
+<section class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h1 class="h4 mb-0">{{ message_title }}</h1>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    
+                    <h2 class="h5 mb-4">{{ message_text }}</h2>
+                    
+                    <p class="mb-4">
+                        {% if app.request.query.get('reason') == 'already_used' %}
+                            Ce lien a déjà été utilisé pour réinitialiser votre mot de passe. 
+                            Pour des raisons de sécurité, un lien de réinitialisation ne peut être utilisé qu'une seule fois.
+                        {% elseif app.request.query.get('reason') == 'expired' %}
+                            Pour des raisons de sécurité, les liens de réinitialisation expirent après 1 heure.
+                        {% endif %}
+                    </p>
+                    
+                    <div class="alert alert-info mb-4">
+                        <p class="mb-0">
+                            Si vous avez toujours besoin de réinitialiser votre mot de passe, veuillez faire une nouvelle demande.
+                        </p>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{{ path('app_forgot_password_request') }}" class="btn btn-primary">
+                            <i class="fas fa-redo-alt me-2"></i>Demander un nouveau lien
+                        </a>
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Retour à la connexion
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% macro render_menu_item(item) %}
+    {% if item.isMenuSection %}
+        {% if item.isFirst %}
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>{{ item.label|trans(domain = ea.i18n.translationDomain)|raw }}</span>
+            </h6>
+        {% else %}
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>{{ item.label|trans(domain = ea.i18n.translationDomain)|raw }}</span>
+            </h6>
+        {% endif %}
+    {% else %}
+        <li class="nav-item {{ item.isActive ? 'active' : '' }} {{ item.hasSubItems ? 'has-submenu' : '' }}">
+            <a class="nav-link {{ item.isActive ? 'active' : '' }}" href="{{ item.linkUrl }}" 
+               target="{{ item.linkTarget }}" rel="{{ item.linkRel }}"
+               data-menu-item-id="{{ item.id }}">
+                {% if item.icon is not empty %}<i class="{{ item.icon }} me-2"></i>{% endif %}
+                <span>{{ item.label|trans(domain = ea.i18n.translationDomain)|raw }}</span>
+                {% if item.hasSubItems %}<i class="fa fa-fw fa-angle-right submenu-toggle-icon"></i>{% endif %}
+            </a>
+
+            {% if item.hasSubItems %}
+                <ul class="submenu">
+                    {% for subItem in item.subItems %}
+                        {{ _self.render_menu_item(subItem) }}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{% block main_menu %}
+    <ul class="nav flex-column">
+        {% for menuItem in ea.mainMenu.items %}
+            {{ _self.render_menu_item(menuItem) }}
+        {% endfor %}
+    </ul>
+{% endblock main_menu %}

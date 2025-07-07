@@ -1,0 +1,87 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Configuration du Site | SHOP BJ Administration{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Configuration du Site</h1>
+    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Information sur le Thème</h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" role="alert">
+                        <h5><i class="fas fa-info-circle me-2"></i> Note importante</h5>
+                        <p>Le système de thèmes multiples a été simplifié. SHOP BJ utilise maintenant un seul thème unifié qui offre une expérience utilisateur cohérente.</p>
+                        <p>Ce thème a été conçu pour être neutre en termes de genre, avec une palette de couleurs bleu-gris complétée par des accents or et beige, adaptée à tous les types de produits de mode.</p>
+                    </div>
+                    
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    
+                    {% for message in app.flashes('danger') %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h5 class="card-title">Thème SHOP BJ</h5>
+                                    <div class="mb-4">
+                                        <p class="mb-1"><strong>Nom du site:</strong> {{ site_name }}</p>
+                                        <p class="mb-1"><strong>Logo:</strong> {{ site_logo }}</p>
+                                    </div>
+                                    
+                                    <div class="theme-preview mb-3 p-4" style="background-color: #F2F5F9; border-radius: 8px;">
+                                        <h6 class="mb-3">Palette de couleurs</h6>
+                                        <div class="d-flex flex-wrap">
+                                            <div class="color-swatch me-2 mb-2" style="background-color: #4A6FA5; width: 50px; height: 50px; border-radius: 4px;" title="Bleu-gris neutre"></div>
+                                            <div class="color-swatch me-2 mb-2" style="background-color: #344E7A; width: 50px; height: 50px; border-radius: 4px;" title="Bleu-gris foncé"></div>
+                                            <div class="color-swatch me-2 mb-2" style="background-color: #6A8CBF; width: 50px; height: 50px; border-radius: 4px;" title="Bleu-gris moyen"></div>
+                                            <div class="color-swatch me-2 mb-2" style="background-color: #9DB4D6; width: 50px; height: 50px; border-radius: 4px;" title="Bleu-gris clair"></div>
+                                            <div class="color-swatch me-2 mb-2" style="background-color: #D4AF37; width: 50px; height: 50px; border-radius: 4px;" title="Or neutre"></div>
+                                            <div class="color-swatch me-2 mb-2" style="background-color: #D8C8B8; width: 50px; height: 50px; border-radius: 4px;" title="Beige neutre"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="card-text">Le thème standard de SHOP BJ offre une interface neutre et élégante, adaptée à tous les genres et styles de mode.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Avantages du thème unifié</h5>
+                                    <ul class="list-group list-group-flush mb-4">
+                                        <li class="list-group-item"><i class="fas fa-check text-success me-2"></i> Interface cohérente pour tous les utilisateurs</li>
+                                        <li class="list-group-item"><i class="fas fa-check text-success me-2"></i> Design neutre adapté à tous genres de vêtements</li>
+                                        <li class="list-group-item"><i class="fas fa-check text-success me-2"></i> Navigation simplifiée et intuitive</li>
+                                        <li class="list-group-item"><i class="fas fa-check text-success me-2"></i> Performances améliorées (moins de ressources)</li>
+                                        <li class="list-group-item"><i class="fas fa-check text-success me-2"></i> Maintenance facilitée</li>
+                                    </ul>
+                                    
+                                    <div class="alert alert-light border">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle me-1"></i> Pour toute personnalisation avancée du thème, veuillez contacter votre développeur.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

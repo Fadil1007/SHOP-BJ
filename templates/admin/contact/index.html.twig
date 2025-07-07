@@ -1,0 +1,124 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des Messages de Contact | {{ site_name }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Messages de Contact
+            {% if unreadCount > 0 %}
+                <span class="badge bg-danger ms-2">{{ unreadCount }} non lu{% if unreadCount > 1 %}s{% endif %}</span>
+            {% endif %}
+        </h1>
+        <a href="{{ path('admin_index') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Retour au tableau de bord
+        </a>
+    </div>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Liste des messages ({{ contacts|length }})</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3" style="width: 60px;">Statut</th>
+                            <th>Date</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Sujet</th>
+                            <th class="text-end pe-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if contacts|length > 0 %}
+                            {% for contact in contacts %}
+                                <tr class="{{ not contact.isRead ? 'table-warning fw-bold' : '' }}">
+                                    <td class="ps-3">
+                                        {% if contact.isRead %}
+                                            <span class="badge bg-secondary"><i class="fas fa-check me-1"></i>Lu</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark"><i class="fas fa-envelope me-1"></i>Non lu</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ contact.createdAt|date('d/m/Y H:i') }}</td>
+                                    <td>{{ contact.name }}</td>
+                                    <td>
+                                        <a href="mailto:{{ contact.email }}" class="text-decoration-none">
+                                            {{ contact.email }}
+                                        </a>
+                                    </td>
+                                    <td>{{ contact.subject }}</td>
+                                    <td class="text-end pe-3">
+                                        <a href="{{ path('app_admin_contact_show', {'id': contact.id}) }}" class="btn btn-sm btn-info me-1">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+                                        {% if contact.isRead %}
+                                            <form method="post" action="{{ path('app_admin_contact_mark_unread', {'id': contact.id}) }}" class="d-inline">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('mark_unread' ~ contact.id) }}">
+                                                <button class="btn btn-sm btn-warning" type="submit" title="Marquer comme non lu">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <form method="post" action="{{ path('app_admin_contact_mark_read', {'id': contact.id}) }}" class="d-inline">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('mark_read' ~ contact.id) }}">
+                                                <button class="btn btn-sm btn-secondary" type="submit" title="Marquer comme lu">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                        <form method="post" action="{{ path('app_admin_contact_delete', {'id': contact.id}) }}" class="d-inline delete-form" data-confirmation="Êtes-vous sûr de vouloir supprimer ce message ?">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
+                                            <button class="btn btn-sm btn-danger" type="submit" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <p class="text-muted mb-0">Aucun message de contact pour le moment.</p>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ajout d'une confirmation pour les formulaires de suppression
+        document.querySelectorAll('.delete-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                if (!confirm(this.dataset.confirmation)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

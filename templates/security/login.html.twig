@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - SHOP BJ{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .flash-error {
+            font-weight: bold;
+            font-size: 1.1em;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+            border-left: 5px solid #dc3545;
+            padding: 12px;
+            margin-bottom: 20px;
+            animation: flashShake 0.6s ease-in-out;
+        }
+
+        @keyframes flashShake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/password-toggle.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.togglePassword').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const passwordField = document.getElementById(targetId);
+                    if (!passwordField) return;
+                    if (passwordField.getAttribute('type') === 'password') {
+                        passwordField.setAttribute('type', 'text');
+                        this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                    } else {
+                        passwordField.setAttribute('type', 'password');
+                        this.innerHTML = '<i class="fas fa-eye"></i>';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4 text-center">Connexion</h1>
+
+                    {% for message in app.flashes('error') %}
+                        <div class="flash-error alert alert-danger text-center" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                    <form method="post">
+                        <div class="form-floating mb-3">
+                            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" placeholder="email@exemple.com" autocomplete="email" required autofocus>
+                            <label for="inputEmail">Email</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputPassword">Mot de passe</label>
+                            <div class="input-group">
+                                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe" autocomplete="current-password" required>
+                                <button type="button" class="btn btn-outline-secondary togglePassword" data-target="inputPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="_remember_me" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <div class="d-grid mb-3">
+                            <button class="btn btn-primary btn-lg" type="submit">
+                                Se connecter
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <p>Vous n'avez pas de compte ? <a href="{{ path('app_register') }}">Créer un compte</a></p>
+                            <p><a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

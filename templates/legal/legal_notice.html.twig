@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Mentions légales</h1>
+            
+            {% if content %}
+                <div class="legal-content">
+                    {{ content|raw }}
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    <p>Les mentions légales n'ont pas encore été définies. Veuillez contacter l'administrateur du site.</p>
+                </div>
+            {% endif %}
+            
+            <div class="mt-4">
+                <a href="{{ path('app_home') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i> Retour à l'accueil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

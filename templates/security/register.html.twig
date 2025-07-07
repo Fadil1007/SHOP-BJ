@@ -1,0 +1,185 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - SHOP BJ{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/password-toggle.js') }}"></script>
+    <script>
+        // Script spécifique pour cette page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction directe pour gérer les boutons de bascule sur cette page
+            document.querySelectorAll('.togglePassword').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Récupérer l'ID du champ de mot de passe cible
+                    const targetId = this.getAttribute('data-target');
+                    console.log("Toggle direct pour:", targetId);
+                    
+                    // Trouver le champ de mot de passe associé
+                    const passwordField = document.getElementById(targetId);
+                    if (!passwordField) {
+                        console.error("Champ de mot de passe non trouvé:", targetId);
+                        return;
+                    }
+                    
+                    // Forcer la bascule du type
+                    if (passwordField.getAttribute('type') === 'password') {
+                        passwordField.setAttribute('type', 'text');
+                        this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                        console.log("Mot de passe affiché");
+                    } else {
+                        passwordField.setAttribute('type', 'password');
+                        this.innerHTML = '<i class="fas fa-eye"></i>';
+                        console.log("Mot de passe masqué");
+                    }
+                });
+            });
+            console.log("Script de bascule direct initialisé pour la page d'inscription");
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4 text-center">Créer un compte</h1>
+                    
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    
+                    {{ form_start(registrationForm, {'attr': {'class': 'needs-validation'}}) }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="form-floating">
+                                {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control' ~ (registrationForm.username.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(registrationForm.username) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(registrationForm.username) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control' ~ (registrationForm.email.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(registrationForm.email) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(registrationForm.email) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="form-floating">
+                                {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control' ~ (registrationForm.firstName.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(registrationForm.firstName) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(registrationForm.firstName) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control' ~ (registrationForm.lastName.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(registrationForm.lastName) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(registrationForm.lastName) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div>
+                                {{ form_label(registrationForm.plainPassword.first) }}
+                                <div class="input-group">
+                                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control' ~ (registrationForm.plainPassword.first.vars.valid ? '' : ' is-invalid')}}) }}
+                                    <button type="button" class="btn btn-outline-secondary togglePassword" data-target="{{ registrationForm.plainPassword.first.vars.id }}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    {{ form_errors(registrationForm.plainPassword.first) }}
+                                </div>
+                                {% if form_errors(registrationForm.plainPassword.first) %}
+                                    <div class="alert alert-danger mt-2 small">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form_errors(registrationForm.plainPassword.first) }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text mt-1">
+                                    <small class="text-muted">
+                                        Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule et un symbole spécial(@ $ ! . ? ,).
+                                        <br>Exemple: Johndoe@123 (au moins 8 caractères avec 1 majuscule, 1 chiffre et 1 symbole spécial)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div>
+                                {{ form_label(registrationForm.plainPassword.second) }}
+                                <div class="input-group">
+                                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control' ~ (registrationForm.plainPassword.second.vars.valid ? '' : ' is-invalid')}}) }}
+                                    <button type="button" class="btn btn-outline-secondary togglePassword" data-target="{{ registrationForm.plainPassword.second.vars.id }}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    {{ form_errors(registrationForm.plainPassword.second) }}
+                                </div>
+                                {% if form_errors(registrationForm.plainPassword.second) %}
+                                    <div class="alert alert-danger mt-2 small">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form_errors(registrationForm.plainPassword.second) }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text mt-1">
+                                    <small class="text-muted">
+                                        Exemple: Johndoe@123
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input' ~ (registrationForm.agreeTerms.vars.valid ? '' : ' is-invalid')}}) }}
+                            <label class="form-check-label" for="{{ registrationForm.agreeTerms.vars.id }}">
+                                En cochant cette case, j'accepte les <a href="{{ path('terms_of_service') }}" target="_blank">conditions d'utilisation</a> et la <a href="{{ path('privacy_policy') }}" target="_blank">politique de confidentialité</a> de SHOP BJ.
+                            </label>
+                            <div class="invalid-feedback">
+                                {{ form_errors(registrationForm.agreeTerms) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p>Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+                    </div>
+                    
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

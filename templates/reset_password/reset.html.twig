@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialisation du mot de passe - SHOP BJ{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/password-toggle.js') }}"></script>
+    <script>
+        // Script spécifique pour cette page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction directe pour gérer les boutons de bascule sur cette page
+            document.querySelectorAll('.togglePassword').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Récupérer l'ID du champ de mot de passe cible
+                    const targetId = this.getAttribute('data-target');
+                    console.log("Toggle direct pour:", targetId);
+                    
+                    // Trouver le champ de mot de passe associé
+                    const passwordField = document.getElementById(targetId);
+                    if (!passwordField) {
+                        console.error("Champ de mot de passe non trouvé:", targetId);
+                        return;
+                    }
+                    
+                    // Forcer la bascule du type
+                    if (passwordField.getAttribute('type') === 'password') {
+                        passwordField.setAttribute('type', 'text');
+                        this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                        console.log("Mot de passe affiché");
+                    } else {
+                        passwordField.setAttribute('type', 'password');
+                        this.innerHTML = '<i class="fas fa-eye"></i>';
+                        console.log("Mot de passe masqué");
+                    }
+                });
+            });
+            console.log("Script de bascule direct initialisé pour la page de réinitialisation de mot de passe");
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+<section class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">Définir un nouveau mot de passe</h1>
+                </div>
+                <div class="card-body">
+                    {{ form_start(resetForm) }}
+                        <div class="form-group mb-3">
+                            {{ form_label(resetForm.newPassword.first, 'Nouveau mot de passe', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                {{ form_widget(resetForm.newPassword.first, {'attr': {'class': 'form-control'}}) }}
+                                <button type="button" class="btn btn-outline-secondary togglePassword" data-target="{{ resetForm.newPassword.first.vars.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {{ form_errors(resetForm.newPassword.first) }}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            {{ form_label(resetForm.newPassword.second, 'Confirmer le mot de passe', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="input-group">
+                                {{ form_widget(resetForm.newPassword.second, {'attr': {'class': 'form-control'}}) }}
+                                <button type="button" class="btn btn-outline-secondary togglePassword" data-target="{{ resetForm.newPassword.second.vars.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {{ form_errors(resetForm.newPassword.second) }}
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button class="btn btn-primary" type="submit">
+                                Réinitialiser le mot de passe
+                            </button>
+                        </div>
+                    {{ form_end(resetForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

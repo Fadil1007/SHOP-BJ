@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - {{ site_name }}{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/password-toggle.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h1 class="h4 mb-0">Connexion</h1>
+                </div>
+                <div class="card-body">
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i> {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+                    
+                    {{ form_start(login_form, {'action': path('user_login')}) }}
+                    
+                    <div class="mb-3">
+                        {{ form_label(login_form.email) }}
+                        {{ form_widget(login_form.email) }}
+                        {{ form_errors(login_form.email) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(login_form.password) }}
+                        <div class="input-group">
+                            {{ form_widget(login_form.password) }}
+                            <button type="button" class="btn btn-outline-secondary togglePassword" data-target="{{ login_form.password.vars.id }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        {{ form_errors(login_form.password) }}
+                    </div>
+                    
+                    <div class="mb-4 form-check">
+                        {{ form_widget(login_form.remember_me) }}
+                        {{ form_label(login_form.remember_me) }}
+                    </div>
+                    
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Se connecter</button>
+                    </div>
+                    
+                    {{ form_end(login_form) }}
+                    
+                    <div class="mt-4 text-center">
+                        <p>Vous n'avez pas de compte? <a href="{{ path('user_register') }}">Inscrivez-vous</a></p>
+                        <p><a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

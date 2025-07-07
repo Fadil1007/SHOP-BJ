@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
+  <style>
+    .text-logo {
+      font-family: 'Arial Black', Gadget, sans-serif;
+      font-weight: bold;
+      font-size: 80px;
+      fill: #FFFFFF;
+    }
+    .bg-circle {
+      fill: #F58C1E;
+      stroke: #FFFFFF;
+      stroke-width: 4;
+    }
+  </style>
+  <rect width="180" height="180" fill="#F58C1E" />
+  <circle class="bg-circle" cx="90" cy="90" r="70" />
+  <text x="40" y="115" class="text-logo">BJ</text>
+</svg>

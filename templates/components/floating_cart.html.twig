@@ -1,0 +1,98 @@
+<!-- Panier flottant style Shein à droite de l'écran -->
+<div id="floating-cart" class="floating-cart-icon">
+    <a href="{{ path('cart_index') }}" class="cart-icon-link">
+        <div class="floating-cart-summary">
+            <span class="cart-count-float {% if cart_count is defined and cart_count > 0 %}{% else %}d-none{% endif %}">
+                {{ cart_count|default(0) }}
+            </span>
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        {# On n'affiche plus le panier flottant pour les utilisateurs non connectés #}
+        {% if is_granted('ROLE_USER') %}
+            {% set total = 0 %}
+            {% if cartItems is defined and cartItems is not empty %}
+                {% for cartItem in cartItems %}
+                    {% set total = total + (cartItem.product.price * cartItem.quantity) %}
+                {% endfor %}
+                <div class="cart-tooltip">
+                    <span id="floating-cart-total">{{ total|format_currency('EUR', {fraction_digit: 2}) }}</span>
+                </div>
+            {% endif %}
+        {% endif %}
+    </a>
+</div>
+
+<style>
+    .floating-cart-icon {
+        position: fixed;
+        right: 20px;
+        bottom: 120px;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+    
+    .floating-cart-icon:hover {
+        transform: scale(1.1);
+    }
+    
+    .cart-icon-link {
+        display: block;
+        text-decoration: none;
+    }
+    
+    .floating-cart-summary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 50px;
+        height: 50px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .floating-cart-summary i {
+        font-size: 1.4rem;
+        color: white;
+    }
+    
+    .cart-count-float {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: var(--neutral-pop); /* Couleur or neutre */
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .cart-tooltip {
+        position: absolute;
+        right: 60px;
+        bottom: 15px;
+        background-color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        font-size: 0.9rem;
+        color: var(--primary-color);
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+    
+    .floating-cart-icon:hover .cart-tooltip {
+        opacity: 1;
+    }
+</style>

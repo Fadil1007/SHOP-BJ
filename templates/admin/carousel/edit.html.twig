@@ -1,0 +1,78 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Modifier Slide - Administration{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Modifier le slide</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ path('admin_index') }}">Tableau de bord</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_carousel_index') }}">Carousel</a></li>
+        <li class="breadcrumb-item active">Modifier</li>
+    </ol>
+    
+    {% for flash_error in app.flashes('error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit me-1"></i>
+            Formulaire de modification
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            Image actuelle
+                        </div>
+                        <div class="card-body text-center">
+                            {% if carousel.imageFilename %}
+                                <img src="{{ asset(carousel.imageFilename) }}" alt="{{ carousel.title }}" class="img-fluid" style="max-height: 300px;">
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    Aucune image associée à ce slide
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Informations
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Titre :</strong> {{ carousel.title }}</p>
+                            <p><strong>Sous-titre :</strong> {{ carousel.subtitle|default('Non défini') }}</p>
+                            <p><strong>Position :</strong> {{ carousel.position }}</p>
+                            <p><strong>Statut :</strong> 
+                                {% if carousel.active %}
+                                    <span class="badge bg-success">Actif</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactif</span>
+                                {% endif %}
+                            </p>
+                            {% if carousel.buttonText %}
+                                <p><strong>Bouton :</strong> "{{ carousel.buttonText }}" → {{ carousel.buttonLink|default('Lien non défini') }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {{ include('admin/carousel/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+            
+            <div class="mt-3">
+                <a href="{{ path('admin_carousel_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+                </a>
+                <a href="{{ path('admin_carousel_show', {'id': carousel.id}) }}" class="btn btn-info">
+                    <i class="fas fa-eye me-1"></i> Voir détails
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

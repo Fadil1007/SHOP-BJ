@@ -1,0 +1,130 @@
+<?php //App.Entity.Product
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        (($f = &\Symfony\Component\VarExporter\Internal\Registry::$factories)['Symfony\\Component\\Validator\\Mapping\\ClassMetadata'] ?? \Symfony\Component\VarExporter\Internal\Registry::f('Symfony\\Component\\Validator\\Mapping\\ClassMetadata'))(),
+        ($f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'] ?? \Symfony\Component\VarExporter\Internal\Registry::f('Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'))(),
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Symfony\\Component\\Validator\\Constraints\\NotBlank'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\NotBlank')),
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone $p['Symfony\\Component\\Validator\\Constraints\\NotBlank'],
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\Positive'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\Positive')),
+        $f['Symfony\\Component\\Validator\\Mapping\\PropertyMetadata'](),
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\NotNull'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\NotNull')),
+        clone ($p['Symfony\\Component\\Validator\\Constraints\\GreaterThanOrEqual'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\Validator\\Constraints\\GreaterThanOrEqual')),
+    ],
+    null,
+    [
+        'stdClass' => [
+            'name' => [
+                'App\\Entity\\Product',
+                'name',
+                3 => 'price',
+                6 => 'stock',
+            ],
+            'defaultGroup' => [
+                'Product',
+            ],
+            'members' => [
+                [
+                    'name' => [
+                        $o[1],
+                    ],
+                    'price' => [
+                        $o[3],
+                    ],
+                    'stock' => [
+                        $o[6],
+                    ],
+                ],
+            ],
+            'properties' => [
+                [
+                    'name' => $o[1],
+                    'price' => $o[3],
+                    'stock' => $o[6],
+                ],
+            ],
+            'constraints' => [
+                1 => [
+                    $o[2],
+                ],
+                3 => [
+                    $o[4],
+                    $o[5],
+                ],
+                6 => [
+                    $o[7],
+                    $o[8],
+                ],
+            ],
+            'constraintsByGroup' => [
+                1 => [
+                    'Default' => [
+                        $o[2],
+                    ],
+                    'Product' => [
+                        $o[2],
+                    ],
+                ],
+                3 => [
+                    'Default' => [
+                        $o[4],
+                        $o[5],
+                    ],
+                    'Product' => [
+                        $o[4],
+                        $o[5],
+                    ],
+                ],
+                6 => [
+                    'Default' => [
+                        $o[7],
+                        $o[8],
+                    ],
+                    'Product' => [
+                        $o[7],
+                        $o[8],
+                    ],
+                ],
+            ],
+            'class' => [
+                1 => 'App\\Entity\\Product',
+                3 => 'App\\Entity\\Product',
+                6 => 'App\\Entity\\Product',
+            ],
+            'property' => [
+                1 => 'name',
+                3 => 'price',
+                6 => 'stock',
+            ],
+            'groups' => [
+                2 => [
+                    'Default',
+                    'Product',
+                ],
+                4 => [
+                    'Default',
+                    'Product',
+                ],
+                [
+                    'Default',
+                    'Product',
+                ],
+                7 => [
+                    'Default',
+                    'Product',
+                ],
+                [
+                    'Default',
+                    'Product',
+                ],
+            ],
+            'value' => [
+                5 => 0,
+                8 => 0,
+            ],
+        ],
+    ],
+    $o[0],
+    []
+); }];

@@ -1,0 +1,329 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ editMode ? 'Modifier' : 'Ajouter' }} une catégorie - Administration SHOP BJ{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-menu {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .admin-menu a {
+        display: block;
+        padding: 8px 15px;
+        margin-bottom: 5px;
+        color: #495057;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    .admin-menu a:hover, .admin-menu a.active {
+        background: #e9ecef;
+        color: #007bff;
+    }
+    .admin-menu a i {
+        width: 20px;
+        text-align: center;
+        margin-right: 8px;
+    }
+    .admin-header {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .help-text {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    .category-preview-img {
+        max-width: 200px;
+        max-height: 200px;
+        object-fit: contain;
+        margin-top: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="admin-header">
+        <h1>{{ editMode ? 'Modifier' : 'Ajouter' }} une catégorie</h1>
+        <p>Administration des catégories de produits</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="admin-menu">
+                <h5 class="mb-3">Menu principal</h5>
+                <a href="{{ path('admin_index') }}"><i class="fa fa-home"></i> Tableau de bord</a>
+                <a href="{{ path('admin_products') }}"><i class="fa fa-tshirt"></i> Produits</a>
+                <a href="{{ path('admin_categories') }}" class="active"><i class="fa fa-list"></i> Catégories</a>
+                <a href="{{ path('admin_orders') }}"><i class="fa fa-shopping-cart"></i> Commandes</a>
+                <a href="{{ path('admin_users') }}"><i class="fa fa-users"></i> Utilisateurs</a>
+                <a href="{{ path('app_home') }}"><i class="fa fa-arrow-left"></i> Retour au site</a>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+                    {{ form_errors(form) }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.name) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.slug) }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            {{ form_row(form.description) }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.parent) }}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="fa fa-image"></i> Image de la catégorie</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if category.imageFilename %}
+                                        <div class="text-center mb-3">
+                                            <img src="{{ asset(normalize_asset_path(category.imageFilename)) }}?v={{ random() }}" alt="{{ category.name }}" class="category-preview-img img-fluid rounded" style="max-height: 200px;">
+                                            <div class="mt-2 text-muted small">
+                                                <strong>Image actuelle :</strong> {{ category.imageFilename }}
+                                            </div>
+                                        </div>
+                                        <hr>
+                                    {% endif %}
+                                    
+                                    <div class="form-group">
+                                        <div class="mb-2">
+                                            <label class="form-label fw-bold">{{ form_label(form.imageFile) }}</label>
+                                            {% if category.imageFilename %}
+                                                <div class="text-muted small mb-2">
+                                                    <i class="fa fa-info-circle"></i> Laissez ce champ vide pour conserver l'image actuelle
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        {{ form_widget(form.imageFile, {'attr': {'class': 'form-control file-input'}}) }}
+                                        {{ form_errors(form.imageFile) }}
+                                        
+                                        <div class="help-text text-muted mt-2 small">
+                                            <ul class="mb-0 ps-3">
+                                                <li>Formats acceptés : JPG, PNG, WEBP</li>
+                                                <li>Taille maximale : 2 Mo</li>
+                                                <li>Dimensions recommandées : 800x600 pixels</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="fa fa-image"></i> Image d'en-tête de la catégorie</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if category.headerImageFilename %}
+                                        <div class="text-center mb-3">
+                                            <img src="{{ asset(normalize_asset_path(category.headerImageFilename)) }}?v={{ random() }}" alt="{{ category.name }} - En-tête" class="category-preview-img img-fluid rounded" style="max-height: 200px; max-width: 100%;">
+                                            <div class="mt-2 text-muted small">
+                                                <strong>Image d'en-tête actuelle :</strong> {{ category.headerImageFilename }}
+                                            </div>
+                                        </div>
+                                        <hr>
+                                    {% endif %}
+                                    
+                                    <div class="form-group">
+                                        <div class="mb-2">
+                                            {% if form.headerImageFile is defined %}
+                                                <label class="form-label fw-bold">{{ form_label(form.headerImageFile) }}</label>
+                                                {% if category.headerImageFilename %}
+                                                    <div class="text-muted small mb-2">
+                                                        <i class="fa fa-info-circle"></i> Laissez ce champ vide pour conserver l'image actuelle
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        
+                                        {% if form.headerImageFile is defined %}
+                                            {{ form_widget(form.headerImageFile, {'attr': {'class': 'form-control header-file-input'}}) }}
+                                            {{ form_errors(form.headerImageFile) }}
+                                        {% endif %}
+                                        
+                                        <div class="help-text text-muted mt-2 small">
+                                            <ul class="mb-0 ps-3">
+                                                <li>Formats acceptés : JPG, PNG, WEBP</li>
+                                                <li>Taille maximale : 2 Mo</li>
+                                                <li>Dimensions recommandées : 1200x400 pixels (bannière horizontale)</li>
+                                                <li>Cette image sera affichée en haut de la page de catégorie</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="fa fa-star"></i> Options d'affichage</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check form-switch">
+                                        {{ form_widget(form.featured, {'attr': {'class': 'form-check-input'}}) }}
+                                        <label class="form-check-label" for="{{ form.featured.vars.id }}">
+                                            {{ form_label(form.featured) }}
+                                        </label>
+                                        <div class="text-muted small mt-1">
+                                            <i class="fa fa-info-circle"></i> Les catégories mises en avant apparaissent sur la page d'accueil dans la section "Découvrez nos catégories"
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('admin_categories') }}" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left"></i> Retour à la liste
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa {{ editMode ? 'fa-save' : 'fa-plus' }}"></i> 
+                            {{ editMode ? 'Enregistrer les modifications' : 'Ajouter la catégorie' }}
+                        </button>
+                    </div>
+                    
+                    {{ form_rest(form) }}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    // Fonction générique pour la prévisualisation d'images
+    function setupImagePreview(inputSelector, previewContainerClass) {
+        const imageFileInput = document.querySelector(inputSelector);
+        if (imageFileInput) {
+            imageFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Créer un conteneur de prévisualisation s'il n'existe pas
+                    let previewContainer = imageFileInput.closest('.card-body').querySelector('.' + previewContainerClass);
+                    
+                    if (!previewContainer) {
+                        // Si l'image actuelle existe, ajouter la prévisualisation après celle-ci
+                        const existingHr = imageFileInput.closest('.card-body').querySelector('hr');
+                        let insertAfterElement;
+                        
+                        if (existingHr) {
+                            // Insérer après le hr
+                            insertAfterElement = existingHr;
+                        } else {
+                            // Insérer après le titre du formulaire
+                            insertAfterElement = imageFileInput.closest('.form-group').querySelector('.form-label.fw-bold');
+                        }
+                        
+                        previewContainer = document.createElement('div');
+                        previewContainer.className = previewContainerClass + ' mt-3';
+                        
+                        if (insertAfterElement) {
+                            insertAfterElement.after(previewContainer);
+                        } else {
+                            // Fallback: insérer après l'input
+                            imageFileInput.parentNode.appendChild(previewContainer);
+                        }
+                        
+                        // Créer la structure
+                        previewContainer.innerHTML = `
+                            <div class="alert alert-info">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa fa-eye me-2"></i>
+                                    <strong>Aperçu de la nouvelle image</strong>
+                                </div>
+                                <div class="text-center p-2 bg-light rounded">
+                                    <img src="" class="preview-image img-fluid rounded" alt="Aperçu" style="max-height: 200px;">
+                                    <div class="mt-2 text-muted small">
+                                        <span class="file-info"></span>
+                                    </div>
+                                </div>
+                                <div class="mt-2 small text-muted">
+                                    <i class="fa fa-info-circle"></i> Cette image remplacera l'image actuelle après l'enregistrement
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Mise à jour de l'aperçu
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const previewImg = previewContainer.querySelector('.preview-image');
+                        const fileInfo = previewContainer.querySelector('.file-info');
+                        
+                        previewImg.src = event.target.result;
+                        fileInfo.textContent = `${file.name} - ${(file.size / 1024).toFixed(2)} Ko`;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Si aucun fichier n'est sélectionné, supprimer la prévisualisation
+                    const previewContainer = imageFileInput.closest('.card-body').querySelector('.' + previewContainerClass);
+                    if (previewContainer) {
+                        previewContainer.remove();
+                    }
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Prévisualisation de l'image principale
+        setupImagePreview('.file-input', 'image-preview-container');
+        
+        // Prévisualisation de l'image d'en-tête
+        setupImagePreview('.header-file-input', 'header-image-preview-container');
+        
+        // Génération automatique du slug
+        const nameInput = document.querySelector('input[name$="[name]"]');
+        const slugInput = document.querySelector('input[name$="[slug]"]');
+        
+        if (nameInput && slugInput) {
+            nameInput.addEventListener('input', function() {
+                // Si le champ slug est vide, générer automatiquement à partir du nom
+                if (!slugInput.value) {
+                    // Convertir le nom en slug (minuscules, remplacer les espaces par des tirets, supprimer les caractères spéciaux)
+                    let slug = nameInput.value.toLowerCase()
+                        .replace(/[^\w\s-]/g, '') // Supprimer les caractères spéciaux
+                        .replace(/\s+/g, '-')     // Remplacer les espaces par des tirets
+                        .replace(/--+/g, '-');    // Remplacer les multiples tirets par un seul
+                    
+                    slugInput.value = slug;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

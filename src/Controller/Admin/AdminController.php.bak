@@ -1,0 +1,509 @@
+<?php
+
+namespace App\Controller\Admin;
+
+use App\Entity\Category;
+use App\Entity\Order;
+use App\Entity\Product;
+use App\Entity\User;
+use Symfony\Component\String\Slugger\AsciiSlugger;
+use App\Form\ProductType;
+use App\Form\CategoryType;
+use App\Repository\CategoryRepository;
+use App\Repository\OrderRepository;
+use App\Repository\ProductRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+#[IsGranted('ROLE_ADMIN')]
+#[Route('/admin', name: 'admin_')]
+class AdminController extends AbstractController
+{
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PaginatorInterface $paginator
+    ) {
+    }
+
+    #[Route('/', name: 'simple')]
+    public function index(): Response {
+        // Utilisation d'une approche plus légère sans dépendances pour le dashboard
+        return $this->render('admin/dashboard.html.twig');
+    }
+
+    #[Route('/products', name: 'products')]
+    public function products(Request $request, ProductRepository $productRepository): Response
+    {
+        $searchTerm = $request->query->get('search');
+        $queryBuilder = $productRepository->createQueryBuilder('p')
+            ->leftJoin('p.category', 'c')
+            ->addSelect('c');
+
+        if ($searchTerm) {
+            $queryBuilder->where('p.name LIKE :search OR p.description LIKE :search')
+                ->setParameter('search', '%' . $searchTerm . '%');
+        }
+
+        $pagination = $this->paginator->paginate(
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        return $this->render('admin/products.html.twig', [
+            'products' => $pagination,
+        ]);
+    }
+
+    #[Route('/categories', name: 'categories')]
+    public function categories(Request $request, CategoryRepository $categoryRepository): Response
+    {
+        $searchTerm = $request->query->get('search');
+        $queryBuilder = $categoryRepository->createQueryBuilder('c')
+            ->leftJoin('c.products', 'p')
+            ->addSelect('p');
+
+        if ($searchTerm) {
+            $queryBuilder->where('c.name LIKE :search')
+                ->setParameter('search', '%' . $searchTerm . '%');
+        }
+
+        $pagination = $this->paginator->paginate(
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        return $this->render('admin/categories.html.twig', [
+            'categories' => $pagination,
+        ]);
+    }
+
+    #[Route('/orders', name: 'orders')]
+    public function orders(Request $request, OrderRepository $orderRepository): Response
+    {
+        $searchTerm = $request->query->get('search');
+        $status = $request->query->get('status');
+        
+        $queryBuilder = $orderRepository->createQueryBuilder('o')
+            ->leftJoin('o.user', 'u')
+            ->addSelect('u');
+
+        if ($searchTerm) {
+            $queryBuilder->where('o.reference LIKE :search OR u.email LIKE :search')
+                ->setParameter('search', '%' . $searchTerm . '%');
+        }
+
+        if ($status) {
+            if ($searchTerm) {
+                $queryBuilder->andWhere('o.status = :status');
+            } else {
+                $queryBuilder->where('o.status = :status');
+            }
+            $queryBuilder->setParameter('status', $status);
+        }
+        
+        $queryBuilder->orderBy('o.createdAt', 'DESC');
+
+        $pagination = $this->paginator->paginate(
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        return $this->render('admin/orders.html.twig', [
+            'orders' => $pagination,
+        ]);
+    }
+
+    #[Route('/users', name: 'users')]
+    public function users(Request $request, UserRepository $userRepository): Response
+    {
+        $searchTerm = $request->query->get('search');
+        $queryBuilder = $userRepository->createQueryBuilder('u');
+
+        if ($searchTerm) {
+            $queryBuilder->where('u.email LIKE :search OR u.firstName LIKE :search OR u.lastName LIKE :search')
+                ->setParameter('search', '%' . $searchTerm . '%');
+        }
+
+        $pagination = $this->paginator->paginate(
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        return $this->render('admin/users.html.twig', [
+            'users' => $pagination,
+        ]);
+    }
+    
+    #[Route('/product-create', name: 'product_new')]
+    public function newProduct(Request $request): Response
+    {
+        $product = new Product();
+        $product->setIsActive(true);
+        
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Gestion de l'image
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                // Génération d'un nom de fichier unique
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                
+                // Déplacer le fichier dans le répertoire des uploads
+                try {
+                    $uploadsDirectory = 'public/uploads/products';
+                    // Créer le répertoire s'il n'existe pas
+                    if (!file_exists($uploadsDirectory)) {
+                        mkdir($uploadsDirectory, 0777, true);
+                    }
+                    
+                    $imageFile->move(
+                        $uploadsDirectory,
+                        $newFilename
+                    );
+                    
+                    // Enregistrer le nom du fichier dans l'entité
+                    $product->setImageFilename('uploads/products/' . $newFilename);
+                    $product->setImageName($originalFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image : ' . $e->getMessage());
+                    return $this->redirectToRoute('admin_product_new');
+                }
+            }
+            
+            // Si un ancien prix est défini, calculer le pourcentage de réduction
+            if ($product->getOldPrice() && $product->getOldPrice() > $product->getPrice()) {
+                $product->calculateDiscountPercentage();
+            }
+            
+            // Enregistrer le produit
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'Le produit a été ajouté avec succès.');
+            return $this->redirectToRoute('admin_products');
+        }
+        
+        return $this->render('admin/product_form.html.twig', [
+            'form' => $form->createView(),
+            'editMode' => false,
+            'product' => $product,
+        ]);
+    }
+    
+    #[Route('/product/{id}/edit', name: 'product_edit')]
+    public function editProduct(Request $request, Product $product): Response
+    {
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Gestion de l'image
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                // Génération d'un nom de fichier unique
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                
+                // Supprimer l'ancienne image si elle existe
+                $oldImagePath = 'public/' . $product->getImageFilename();
+                if ($oldImagePath && file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+                
+                // Déplacer le fichier dans le répertoire des uploads
+                try {
+                    $uploadsDirectory = 'public/uploads/products';
+                    // Créer le répertoire s'il n'existe pas
+                    if (!file_exists($uploadsDirectory)) {
+                        mkdir($uploadsDirectory, 0777, true);
+                    }
+                    
+                    $imageFile->move(
+                        $uploadsDirectory,
+                        $newFilename
+                    );
+                    
+                    // Enregistrer le nom du fichier dans l'entité
+                    $product->setImageFilename('uploads/products/' . $newFilename);
+                    $product->setImageName($originalFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image : ' . $e->getMessage());
+                    return $this->redirectToRoute('admin_product_edit', ['id' => $product->getId()]);
+                }
+            }
+            
+            // Si un ancien prix est défini, calculer le pourcentage de réduction
+            if ($product->getOldPrice() && $product->getOldPrice() > $product->getPrice()) {
+                $product->calculateDiscountPercentage();
+            } else {
+                $product->setOnSale(false);
+                $product->setDiscountPercentage(null);
+            }
+            
+            // Mettre à jour le produit
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'Le produit a été modifié avec succès.');
+            return $this->redirectToRoute('admin_products');
+        }
+        
+        return $this->render('admin/product_form.html.twig', [
+            'form' => $form->createView(),
+            'editMode' => true,
+            'product' => $product,
+        ]);
+    }
+    
+    #[Route('/product/{id}/delete', name: 'product_delete', methods: ['GET', 'POST'])]
+    public function deleteProduct(Request $request, Product $product): Response
+    {
+        if ($request->isMethod('POST')) {
+            // Vérifier le token CSRF
+            if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
+                // Supprimer l'image associée si elle existe
+                $imagePath = 'public/' . $product->getImageFilename();
+                if ($imagePath && file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                
+                // Supprimer le produit
+                $this->entityManager->remove($product);
+                $this->entityManager->flush();
+                
+                $this->addFlash('success', 'Le produit a été supprimé avec succès.');
+            } else {
+                $this->addFlash('error', 'Token CSRF invalide.');
+            }
+            
+            return $this->redirectToRoute('admin_products');
+        }
+        
+        // Afficher la page de confirmation de suppression
+        return $this->render('admin/product_delete.html.twig', [
+            'product' => $product,
+        ]);
+    }
+    
+    #[Route('/category/new', name: 'category_new')]
+    public function newCategory(Request $request): Response
+    {
+        $category = new Category();
+        
+        $form = $this->createForm(CategoryType::class, $category);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Gestion de l'image
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                // Génération d'un nom de fichier unique
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                
+                // Déplacer le fichier dans le répertoire des uploads
+                try {
+                    $uploadsDirectory = 'public/uploads/categories';
+                    // Créer le répertoire s'il n'existe pas
+                    if (!file_exists($uploadsDirectory)) {
+                        mkdir($uploadsDirectory, 0777, true);
+                    }
+                    
+                    $imageFile->move(
+                        $uploadsDirectory,
+                        $newFilename
+                    );
+                    
+                    // Enregistrer le nom du fichier dans l'entité
+                    $category->setImageFilename('uploads/categories/' . $newFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image : ' . $e->getMessage());
+                    return $this->redirectToRoute("admin_category_new");
+                }
+            }
+            
+            // Générer un slug si non fourni
+            if (!$category->getSlug()) {
+                $slugger = new AsciiSlugger();
+                $category->setSlug(strtolower($slugger->slug($category->getName())));
+            }
+            
+            // Enregistrer la catégorie
+            $this->entityManager->persist($category);
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'La catégorie a été ajoutée avec succès.');
+            return $this->redirectToRoute("admin_categories");
+        }
+        
+        return $this->render('admin/category_form.html.twig', [
+            'form' => $form->createView(),
+            'editMode' => false,
+            'category' => $category,
+        ]);
+    }
+    
+    #[Route('/category/{id}/edit', name: 'category_edit')]
+    public function editCategory(Request $request, Category $category): Response
+    {
+        $form = $this->createForm(CategoryType::class, $category);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Gestion de l'image
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                // Génération d'un nom de fichier unique
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                
+                // Supprimer l'ancienne image si elle existe
+                $oldImagePath = 'public/' . $category->getImageFilename();
+                if ($oldImagePath && file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+                
+                // Déplacer le fichier dans le répertoire des uploads
+                try {
+                    $uploadsDirectory = 'public/uploads/categories';
+                    // Créer le répertoire s'il n'existe pas
+                    if (!file_exists($uploadsDirectory)) {
+                        mkdir($uploadsDirectory, 0777, true);
+                    }
+                    
+                    $imageFile->move(
+                        $uploadsDirectory,
+                        $newFilename
+                    );
+                    
+                    // Enregistrer le nom du fichier dans l'entité
+                    $category->setImageFilename('uploads/categories/' . $newFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image : ' . $e->getMessage());
+                    return $this->redirectToRoute("admin_category_edit", ['id' => $category->getId()]);
+                }
+            }
+            
+            // Générer un slug si non fourni
+            if (!$category->getSlug()) {
+                $slugger = new AsciiSlugger();
+                $category->setSlug(strtolower($slugger->slug($category->getName())));
+            }
+            
+            // Mettre à jour la catégorie
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'La catégorie a été modifiée avec succès.');
+            return $this->redirectToRoute("admin_categories");
+        }
+        
+        return $this->render('admin/category_form.html.twig', [
+            'form' => $form->createView(),
+            'editMode' => true,
+            'category' => $category,
+        ]);
+    }
+    
+    #[Route('/category/{id}/delete', name: 'category_delete', methods: ['GET', 'POST'])]
+    public function deleteCategory(Request $request, Category $category): Response
+    {
+        if ($request->isMethod('POST')) {
+            // Vérifier le token CSRF
+            if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->request->get('_token'))) {
+                // Supprimer l'image associée si elle existe
+                $imagePath = 'public/' . $category->getImageFilename();
+                if ($imagePath && file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                
+                // Supprimer la catégorie
+                $this->entityManager->remove($category);
+                $this->entityManager->flush();
+                
+                $this->addFlash('success', 'La catégorie a été supprimée avec succès.');
+            } else {
+                $this->addFlash('error', 'Token CSRF invalide.');
+            }
+            
+            return $this->redirectToRoute("admin_categories");
+        }
+        
+        // Afficher la page de confirmation de suppression
+        return $this->render('admin/category_delete.html.twig', [
+            'category' => $category,
+        ]);
+    }
+    
+    #[Route('/user/new', name: 'user_new')]
+    public function newUser(Request $request): Response
+    {
+        // À implémenter
+        return $this->redirectToRoute('admin_users');
+    }
+    
+    #[Route('/user/{id}/edit', name: 'user_edit')]
+    public function editUser(Request $request, User $user): Response
+    {
+        // À implémenter
+        return $this->redirectToRoute('admin_users');
+    }
+    
+    #[Route('/user/{id}/delete', name: 'user_delete')]
+    public function deleteUser(Request $request, User $user): Response
+    {
+        // À implémenter
+        return $this->redirectToRoute('admin_users');
+    }
+    
+    #[Route('/order/export', name: 'order_export')]
+    public function exportOrders(): Response
+    {
+        // À implémenter
+        return $this->redirectToRoute('admin_orders');
+    }
+    
+    #[Route('/order/{id}/view', name: 'order_view')]
+    public function viewOrder(Order $order): Response
+    {
+        // À implémenter
+        return $this->redirectToRoute('admin_orders');
+    }
+    
+    #[Route('/order/{id}/edit', name: 'order_edit')]
+    public function editOrder(Request $request, Order $order): Response
+    {
+        // À implémenter
+        return $this->redirectToRoute('admin_orders');
+    }
+    
+    #[Route('/order/{id}/invoice', name: 'order_invoice')]
+    public function orderInvoice(Order $order): Response
+    {
+        // Récupérer les informations de la commande pour la facture
+        $orderItems = $order->getOrderItems();
+        $user = $order->getUser();
+
+        return $this->render('admin/order_invoice.html.twig', [
+            'order' => $order,
+            'orderItems' => $orderItems,
+            'user' => $user,
+        ]);
+    }
+}

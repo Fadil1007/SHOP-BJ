@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="min-height: calc(100vh - 56px);">
+            <div class="position-sticky pt-3">
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Administration</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {% if app.request.get('_route') == 'admin_index' %}active{% endif %}" href="{{ path('admin_index') }}">
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if app.request.get('_route') == 'admin_products' %}active{% endif %}" href="{{ path('admin_products') }}">
+                            <i class="fas fa-box-open me-2"></i>
+                            Produits
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if app.request.get('_route') == 'admin_users' %}active{% endif %}" href="{{ path('admin_users') }}">
+                            <i class="fas fa-users me-2"></i>
+                            Utilisateurs
+                        </a>
+                    </li>
+                </ul>
+                
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Configuration</span>
+                </h6>
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link{{ app.request.get('_route') starts with 'admin_config_' ? ' active' : '' }}" href="{{ path('admin_config_index') }}">
+                            <i class="fas fa-cog me-2"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="border-top my-3"></div>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_home') }}">
+                            <i class="fas fa-home me-2"></i>
+                            Retour au site
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            Déconnexion
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}

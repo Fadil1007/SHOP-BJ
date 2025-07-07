@@ -1,0 +1,134 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des Messages Flash{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Messages Flash</h1>
+        <a href="{{ path('admin_flash_message_new') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nouveau Message
+        </a>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form method="GET" action="{{ path('admin_flash_messages') }}">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Rechercher un message..." value="{{ app.request.query.get('search') }}">
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    {% if app.request.query.get('search') %}
+                        <a href="{{ path('admin_flash_messages') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table des messages flash -->
+    <div class="card">
+        <div class="card-body">
+            {% if flash_messages|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Type</th>
+                                <th>Pages cibles</th>
+                                <th>Statut</th>
+                                <th>Période</th>
+                                <th>Créé le</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flashMessage in flash_messages %}
+                                <tr>
+                                    <td>{{ flashMessage.id }}</td>
+                                    <td>{{ flashMessage.title }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ flashMessage.type == 'success' ? 'success' : (flashMessage.type == 'warning' ? 'warning' : (flashMessage.type == 'danger' ? 'danger' : 'info')) }}">
+                                            {{ flashMessage.type|upper }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if flashMessage.targetPages == 'all' %}
+                                            Toutes les pages
+                                        {% elseif flashMessage.targetPages == 'home' %}
+                                            Accueil
+                                        {% elseif flashMessage.targetPages == 'products' %}
+                                            Produits
+                                        {% elseif flashMessage.targetPages == 'categories' %}
+                                            Catégories
+                                        {% else %}
+                                            {{ flashMessage.targetPages }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{{ path('admin_flash_message_toggle', {id: flashMessage.id}) }}" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ flashMessage.id) }}">
+                                            <button type="submit" class="btn btn-sm {{ flashMessage.isActive ? 'btn-success' : 'btn-secondary' }}">
+                                                {% if flashMessage.isActive %}
+                                                    <i class="fas fa-eye"></i> Actif
+                                                {% else %}
+                                                    <i class="fas fa-eye-slash"></i> Inactif
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        {% if flashMessage.startDate or flashMessage.endDate %}
+                                            <small>
+                                                {% if flashMessage.startDate %}
+                                                    Du {{ flashMessage.startDate|date('d/m/Y H:i') }}
+                                                {% endif %}
+                                                {% if flashMessage.endDate %}
+                                                    {% if flashMessage.startDate %}<br>{% endif %}
+                                                    Au {{ flashMessage.endDate|date('d/m/Y H:i') }}
+                                                {% endif %}
+                                            </small>
+                                        {% else %}
+                                            <small class="text-muted">Permanent</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ flashMessage.createdAt|date('d/m/Y H:i') }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ path('admin_flash_message_edit', {id: flashMessage.id}) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ path('admin_flash_message_delete', {id: flashMessage.id}) }}" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {{ knp_pagination_render(flash_messages) }}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-envelope fa-3x text-muted mb-3"></i>
+                    <h4>Aucun message flash</h4>
+                    <p class="text-muted">Créez votre premier message flash pour communiquer avec vos visiteurs.</p>
+                    <a href="{{ path('admin_flash_message_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Créer un message
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

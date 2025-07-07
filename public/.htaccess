@@ -1,0 +1,19 @@
+# 🔒 Rediriger automatiquement vers HTTPS
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirection HTTP → HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # 🎯 Redirection vers le contrôleur frontal Symfony
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# 💾 Augmenter la limite de mémoire PHP
+<IfModule mod_php.c>
+    php_value memory_limit 256M
+</IfModule>
+

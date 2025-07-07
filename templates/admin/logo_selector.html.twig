@@ -1,0 +1,189 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Sélecteur de Logo | Admin SHOP BJ{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Sélecteur de Logo</h1>
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Logo actuel</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ asset(current_logo) }}" alt="Logo actuel" class="img-fluid mb-3" style="max-height: 100px;">
+                    <p class="mb-0 text-muted">Chemin: {{ current_logo }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h2 class="mb-3">Choisir un nouveau logo</h2>
+    
+    <h4 class="mt-4 mb-3">Logos originaux</h4>
+    <div class="row g-4 mb-5">
+        <!-- Logo Géométrique -->
+        <div class="col-md-4">
+            <div class="card h-100 {% if current_logo == 'uploads/logo/logo-geometric.svg' %}border-primary{% endif %}">
+                <div class="card-header {% if current_logo == 'uploads/logo/logo-geometric.svg' %}bg-primary text-white{% endif %}">
+                    <h5 class="mb-0">Style Géométrique</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ asset('uploads/logo/logo-geometric.svg') }}" alt="Logo Géométrique" class="img-fluid mb-3" style="max-height: 80px;">
+                    
+                    <form action="{{ path('admin_update_logo') }}" method="post" class="mt-3">
+                        <input type="hidden" name="logo_path" value="uploads/logo/logo-geometric.svg">
+                        <button type="submit" class="btn {% if current_logo == 'uploads/logo/logo-geometric.svg' %}btn-outline-primary{% else %}btn-primary{% endif %} btn-sm">
+                            {% if current_logo == 'uploads/logo/logo-geometric.svg' %}Logo actuel{% else %}Sélectionner{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logo Moderne -->
+        <div class="col-md-4">
+            <div class="card h-100 {% if current_logo == 'uploads/logo/logo-new.svg' %}border-primary{% endif %}">
+                <div class="card-header {% if current_logo == 'uploads/logo/logo-new.svg' %}bg-primary text-white{% endif %}">
+                    <h5 class="mb-0">Style Moderne</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ asset('uploads/logo/logo-new.svg') }}" alt="Logo Moderne" class="img-fluid mb-3" style="max-height: 80px;">
+                    
+                    <form action="{{ path('admin_update_logo') }}" method="post" class="mt-3">
+                        <input type="hidden" name="logo_path" value="uploads/logo/logo-new.svg">
+                        <button type="submit" class="btn {% if current_logo == 'uploads/logo/logo-new.svg' %}btn-outline-primary{% else %}btn-primary{% endif %} btn-sm">
+                            {% if current_logo == 'uploads/logo/logo-new.svg' %}Logo actuel{% else %}Sélectionner{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logo Minimaliste -->
+        <div class="col-md-4">
+            <div class="card h-100 {% if current_logo == 'uploads/logo/logo-minimal.svg' %}border-primary{% endif %}">
+                <div class="card-header {% if current_logo == 'uploads/logo/logo-minimal.svg' %}bg-primary text-white{% endif %}">
+                    <h5 class="mb-0">Style Minimaliste</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ asset('uploads/logo/logo-minimal.svg') }}" alt="Logo Minimaliste" class="img-fluid mb-3" style="max-height: 80px;">
+                    
+                    <form action="{{ path('admin_update_logo') }}" method="post" class="mt-3">
+                        <input type="hidden" name="logo_path" value="uploads/logo/logo-minimal.svg">
+                        <button type="submit" class="btn {% if current_logo == 'uploads/logo/logo-minimal.svg' %}btn-outline-primary{% else %}btn-primary{% endif %} btn-sm">
+                            {% if current_logo == 'uploads/logo/logo-minimal.svg' %}Logo actuel{% else %}Sélectionner{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mt-4 mb-3">Nouveaux logos tendance</h4>
+    <div class="row g-4">
+        <!-- Logo Fashion -->
+        <div class="col-md-4">
+            <div class="card h-100 {% if current_logo == 'uploads/logo/logo-fashion.svg' %}border-primary{% endif %}">
+                <div class="card-header {% if current_logo == 'uploads/logo/logo-fashion.svg' %}bg-primary text-white{% endif %}">
+                    <h5 class="mb-0">Style Coloré</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ asset('uploads/logo/logo-fashion.svg') }}" alt="Logo Fashion" class="img-fluid mb-3" style="max-height: 80px; background-color: white; padding: 8px; border-radius: 4px;">
+                    
+                    <form action="{{ path('admin_update_logo') }}" method="post" class="mt-3">
+                        <input type="hidden" name="logo_path" value="uploads/logo/logo-fashion.svg">
+                        <button type="submit" class="btn {% if current_logo == 'uploads/logo/logo-fashion.svg' %}btn-outline-primary{% else %}btn-primary{% endif %} btn-sm">
+                            {% if current_logo == 'uploads/logo/logo-fashion.svg' %}Logo actuel{% else %}Sélectionner{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logo Élégant -->
+        <div class="col-md-4">
+            <div class="card h-100 {% if current_logo == 'uploads/logo/logo-elegant.svg' %}border-primary{% endif %}">
+                <div class="card-header {% if current_logo == 'uploads/logo/logo-elegant.svg' %}bg-primary text-white{% endif %}">
+                    <h5 class="mb-0">Style Élégant</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ asset('uploads/logo/logo-elegant.svg') }}" alt="Logo Élégant" class="img-fluid mb-3" style="max-height: 80px; background-color: white; padding: 8px; border-radius: 4px;">
+                    
+                    <form action="{{ path('admin_update_logo') }}" method="post" class="mt-3">
+                        <input type="hidden" name="logo_path" value="uploads/logo/logo-elegant.svg">
+                        <button type="submit" class="btn {% if current_logo == 'uploads/logo/logo-elegant.svg' %}btn-outline-primary{% else %}btn-primary{% endif %} btn-sm">
+                            {% if current_logo == 'uploads/logo/logo-elegant.svg' %}Logo actuel{% else %}Sélectionner{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logo Luxe -->
+        <div class="col-md-4">
+            <div class="card h-100 {% if current_logo == 'uploads/logo/logo-luxury.svg' %}border-primary{% endif %}">
+                <div class="card-header {% if current_logo == 'uploads/logo/logo-luxury.svg' %}bg-primary text-white{% endif %}">
+                    <h5 class="mb-0">Style Luxe</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ asset('uploads/logo/logo-luxury.svg') }}" alt="Logo Luxe" class="img-fluid mb-3" style="max-height: 80px; background-color: white; padding: 8px; border-radius: 4px;">
+                    
+                    <form action="{{ path('admin_update_logo') }}" method="post" class="mt-3">
+                        <input type="hidden" name="logo_path" value="uploads/logo/logo-luxury.svg">
+                        <button type="submit" class="btn {% if current_logo == 'uploads/logo/logo-luxury.svg' %}btn-outline-primary{% else %}btn-primary{% endif %} btn-sm">
+                            {% if current_logo == 'uploads/logo/logo-luxury.svg' %}Logo actuel{% else %}Sélectionner{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-5">
+        <h3>Aperçu des logos dans différents contextes</h3>
+        
+        <div class="row g-4 mt-3">
+            <!-- Aperçu Navbar -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Aperçu dans la barre de navigation</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="bg-white p-3 border">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ asset(current_logo) }}" alt="Logo" height="40" class="me-3">
+                                <div class="d-flex gap-3 ms-auto">
+                                    <span class="text-muted">ACCUEIL</span>
+                                    <span class="text-muted">NOUVEAUTÉS</span>
+                                    <span class="text-muted">FEMMES</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aperçu Footer -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Aperçu dans le pied de page</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="bg-light p-3 border">
+                            <img src="{{ asset(current_logo) }}" alt="Logo" height="60" class="mb-2">
+                            <p class="text-muted small mb-1">Votre destination mode en ligne</p>
+                            <div class="social-links small mb-0 text-muted">
+                                <i class="fab fa-facebook-f me-2"></i>
+                                <i class="fab fa-instagram me-2"></i>
+                                <i class="fab fa-twitter me-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

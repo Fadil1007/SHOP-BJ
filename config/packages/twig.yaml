@@ -1,0 +1,13 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    form_themes:
+        - 'bootstrap_5_layout.html.twig'
+        - 'form/color_choice_type.html.twig'
+    globals:
+        app_name: 'SHOP BJ'
+        app_description: 'Votre boutique de mode en ligne'
+        app_version: '1.0.0'
+        ga_tracking: ''
+        primary_color: '#0d6efd'
+        kkiapay_public_key: '%env(KKIAPAY_PUBLIC_KEY)%'
+        stripe_publishable_key: '%env(STRIPE_PUBLISHABLE_KEY)%'

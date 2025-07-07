@@ -1,0 +1,122 @@
+<div class="card mb-4 review-form {% if app.request.get('reviewForm') != 'open' %}d-none{% endif %}" id="reviewForm">
+    <div class="card-header bg-success text-white">
+        <h3 class="h5 mb-0">Partagez votre avis sur ce produit</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ path('app_review_add', {'id': product.id}) }}">
+            <div class="mb-3">
+                <label for="rating" class="form-label">Votre note <span class="text-danger">*</span></label>
+                <div class="rating-input mb-2">
+                    <div class="d-flex gap-2">
+                        {% for i in 1..5 %}
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input visually-hidden" type="radio" name="rating" id="rating{{ i }}" value="{{ i }}" required {% if i == 5 %}checked{% endif %}>
+                                <label class="form-check-label rating-star" for="rating{{ i }}">
+                                    <i class="bi bi-star" data-rating="{{ i }}"></i>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="title" class="form-label">Titre (optionnel)</label>
+                <input type="text" class="form-control" id="title" name="title" maxlength="255" placeholder="Résumez votre expérience en quelques mots">
+            </div>
+            
+            <div class="mb-3">
+                <label for="comment" class="form-label">Votre commentaire <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="comment" name="comment" rows="4" required minlength="5" maxlength="1000" placeholder="Partagez votre expérience avec ce produit..."></textarea>
+                <div class="form-text">Entre 5 et 1000 caractères</div>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-outline-secondary" id="cancelReview">
+                    Annuler
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-send"></i> Publier mon avis
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Système d'étoiles interactif
+    const ratingStars = document.querySelectorAll('.rating-star i');
+    
+    ratingStars.forEach(star => {
+        // Initialisation: remplir les étoiles selon la valeur cochée
+        updateStars();
+        
+        star.addEventListener('click', function() {
+            const rating = this.getAttribute('data-rating');
+            document.querySelector(`#rating${rating}`).checked = true;
+            updateStars();
+        });
+        
+        star.addEventListener('mouseover', function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            
+            ratingStars.forEach(s => {
+                const starRating = parseInt(s.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    s.classList.remove('bi-star');
+                    s.classList.add('bi-star-fill');
+                } else {
+                    s.classList.remove('bi-star-fill');
+                    s.classList.add('bi-star');
+                }
+            });
+        });
+        
+        star.parentElement.addEventListener('mouseout', function() {
+            updateStars();
+        });
+    });
+    
+    function updateStars() {
+        const checkedRadio = document.querySelector('input[name="rating"]:checked');
+        if (checkedRadio) {
+            const checkedRating = parseInt(checkedRadio.value);
+            
+            ratingStars.forEach(star => {
+                const starRating = parseInt(star.getAttribute('data-rating'));
+                if (starRating <= checkedRating) {
+                    star.classList.remove('bi-star');
+                    star.classList.add('bi-star-fill');
+                } else {
+                    star.classList.remove('bi-star-fill');
+                    star.classList.add('bi-star');
+                }
+            });
+        }
+    }
+    
+    // Afficher/masquer le formulaire d'avis
+    const reviewFormTrigger = document.getElementById('writeReviewBtn');
+    const reviewForm = document.getElementById('reviewForm');
+    const cancelReviewBtn = document.getElementById('cancelReview');
+    
+    if (reviewFormTrigger) {
+        reviewFormTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            reviewForm.classList.remove('d-none');
+            reviewFormTrigger.classList.add('d-none');
+            document.querySelector('#comment').focus();
+        });
+    }
+    
+    if (cancelReviewBtn) {
+        cancelReviewBtn.addEventListener('click', function() {
+            reviewForm.classList.add('d-none');
+            if (reviewFormTrigger) {
+                reviewFormTrigger.classList.remove('d-none');
+            }
+        });
+    }
+});
+</script>

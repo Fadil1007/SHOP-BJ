@@ -1,0 +1,222 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        {# Sidebar #}
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Mon compte</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user me-2"></i> Tableau de bord
+                    </a>
+                    <a href="{{ path('app_profile_edit') }}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-edit me-2"></i> Mes informations
+                    </a>
+                    <a href="{{ path('app_profile_orders') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shopping-bag me-2"></i> Mes commandes
+                    </a>
+                    <a href="{{ path('app_profile_change_password') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-lock me-2"></i> Changer de mot de passe
+                    </a>
+                    <a href="{{ path('app_logout') }}" class="list-group-item list-group-item-action text-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        {# Main Content #}
+        <div class="col-md-9">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="card-title mb-0">Modifier mes informations</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(profileForm, {'attr': {'class': 'needs-validation'}}) }}
+                    {{ form_row(profileForm._token) }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="form-floating">
+                                {{ form_widget(profileForm.username, {'attr': {'class': 'form-control' ~ (profileForm.username.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(profileForm.username) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(profileForm.username) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form_widget(profileForm.email, {'attr': {'class': 'form-control' ~ (profileForm.email.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(profileForm.email) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(profileForm.email) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="form-floating">
+                                {{ form_widget(profileForm.firstName, {'attr': {'class': 'form-control' ~ (profileForm.firstName.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(profileForm.firstName) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(profileForm.firstName) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form_widget(profileForm.lastName, {'attr': {'class': 'form-control' ~ (profileForm.lastName.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(profileForm.lastName) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(profileForm.lastName) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            {{ form_widget(profileForm.phoneNumber, {'attr': {'class': 'form-control' ~ (profileForm.phoneNumber.vars.valid ? '' : ' is-invalid'), 'maxlength': '14', 'pattern': '\\+229[0-9]*', 'inputmode': 'numeric', 'onkeypress': 'return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 43'}}) }}
+                            {{ form_label(profileForm.phoneNumber) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(profileForm.phoneNumber) }}
+                            </div>
+                            <small class="text-muted">Format requis: +229 suivi de 10 chiffres</small>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mt-4 mb-3">Adresse de livraison</h5>
+                    
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            {{ form_widget(profileForm.address, {'attr': {'class': 'form-control' ~ (profileForm.address.vars.valid ? '' : ' is-invalid')}}) }}
+                            {{ form_label(profileForm.address) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(profileForm.address) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="form-floating">
+                                {{ form_widget(profileForm.city, {'attr': {'class': 'form-control' ~ (profileForm.city.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(profileForm.city) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(profileForm.city) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form_widget(profileForm.postalCode, {'attr': {'class': 'form-control' ~ (profileForm.postalCode.vars.valid ? '' : ' is-invalid')}}) }}
+                                {{ form_label(profileForm.postalCode) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(profileForm.postalCode) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="form-floating">
+                            {{ form_widget(profileForm.country, {'attr': {'class': 'form-control' ~ (profileForm.country.vars.valid ? '' : ' is-invalid')}}) }}
+                            {{ form_label(profileForm.country) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(profileForm.country) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ path('app_profile') }}" class="btn btn-outline-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                    </div>
+                    
+                    {{ form_end(profileForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Format le numéro de téléphone avec le préfixe +229
+    const phoneInput = document.getElementById('profile_form_phoneNumber');
+    
+    if (phoneInput) {
+        // Assurez-vous que la valeur commence par +229 si elle n'est pas vide
+        phoneInput.addEventListener('blur', function(e) {
+            let value = this.value.trim();
+            
+            // Supprimer le préfixe +229 s'il existe déjà
+            if (value.startsWith('+229')) {
+                value = value.substring(4);
+            }
+            
+            // Si le champ n'est pas vide, ajouter le préfixe
+            if (value) {
+                // Suppression de tous les caractères non numériques
+                value = value.replace(/\D/g, '');
+                
+                // Limitation à 10 chiffres
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
+                }
+                
+                // Reconstruire le numéro avec préfixe
+                this.value = '+229' + value;
+            }
+        });
+        
+        // N'autoriser que les chiffres lors de la saisie et limiter à 10 chiffres
+        phoneInput.addEventListener('input', function(e) {
+            let value = this.value;
+            
+            // Si la valeur commence par +229, on le préserve et on traite le reste
+            if (value.startsWith('+229')) {
+                const prefix = '+229';
+                const numberPart = value.substring(4).replace(/\D/g, '');
+                
+                // Limiter la partie numérique à 10 chiffres
+                const truncated = numberPart.substring(0, 10);
+                
+                // Reconstruire avec le préfixe
+                this.value = prefix + truncated;
+            } else {
+                // Si pas de préfixe, traiter directement
+                const numberPart = value.replace(/\D/g, '');
+                
+                // Limiter à 10 chiffres
+                const truncated = numberPart.substring(0, 10);
+                
+                // Ajouter le préfixe
+                this.value = '+229' + truncated;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

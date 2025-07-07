@@ -1,0 +1,376 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ editMode ? 'Modifier' : 'Ajouter' }} un produit - Administration SHOP BJ{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .admin-menu {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .admin-menu a {
+        display: block;
+        padding: 8px 15px;
+        margin-bottom: 5px;
+        color: #495057;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    .admin-menu a:hover, .admin-menu a.active {
+        background: #e9ecef;
+        color: #007bff;
+    }
+    .admin-menu a i {
+        width: 20px;
+        text-align: center;
+        margin-right: 8px;
+    }
+    .admin-header {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .sizes-checkboxes, .colors-checkboxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .sizes-checkboxes div, .colors-checkboxes div {
+        margin-right: 15px;
+        margin-bottom: 10px;
+    }
+    .colors-checkboxes .form-check {
+        display: flex;
+        align-items: center;
+    }
+    .colors-checkboxes .form-check-label {
+        display: flex;
+        align-items: center;
+        margin-left: 5px;
+    }
+    .help-text {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    .product-preview-img {
+        max-width: 200px;
+        max-height: 200px;
+        object-fit: contain;
+        margin-top: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="admin-header">
+        <h1>{{ editMode ? 'Modifier' : 'Ajouter' }} un produit</h1>
+        <p>Administration du catalogue de produits</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="admin-menu">
+                <h5 class="mb-3">Menu principal</h5>
+                <a href="{{ path('admin_index') }}"><i class="fa fa-home"></i> Tableau de bord</a>
+                <a href="{{ path('admin_products') }}" class="active"><i class="fa fa-tshirt"></i> Produits</a>
+                <a href="{{ path('admin_categories') }}"><i class="fa fa-list"></i> Catégories</a>
+                <a href="{{ path('admin_orders') }}"><i class="fa fa-shopping-cart"></i> Commandes</a>
+                <a href="{{ path('admin_users') }}"><i class="fa fa-users"></i> Utilisateurs</a>
+                <a href="{{ path('app_home') }}"><i class="fa fa-arrow-left"></i> Retour au site</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            {{ form_row(form.name) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.sku) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            {{ form_row(form.price) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.oldPrice) }}
+                            <div class="help-text">Si un ancien prix est spécifié et supérieur au prix actuel, le produit sera affiché comme en promotion.</div>
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.stock) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            {{ form_row(form.shortDescription) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            {{ form_row(form.description) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.category) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.imageFile) }}
+                            <div class="help-text">Formats acceptés : JPG, PNG, WEBP (max 2 Mo) - Au moins une image obligatoire</div>
+
+                            {% if product.imageFilename %}
+                                <div class="mt-2">
+                                    <p>Image principale actuelle :</p>
+                                    <img src="{{ asset(product.imageFilename) }}" alt="{{ product.name }}" class="product-preview-img">
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-danger btn-sm delete-image-btn" data-image="1">
+                                            <i class="fa fa-trash"></i> Supprimer cette image
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.imageFile2) }}
+                            <div class="help-text">Image secondaire (optionnelle)</div>
+
+                            {% if product.imageFilename2 %}
+                                <div class="mt-2">
+                                    <p>Image secondaire actuelle :</p>
+                                    <img src="{{ asset(product.imageFilename2) }}" alt="{{ product.name }}" class="product-preview-img">
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-danger btn-sm delete-image-btn" data-image="2">
+                                            <i class="fa fa-trash"></i> Supprimer cette image
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.imageFile3) }}
+                            <div class="help-text">Image tertiaire (optionnelle)</div>
+
+                            {% if product.imageFilename3 %}
+                                <div class="mt-2">
+                                    <p>Image tertiaire actuelle :</p>
+                                    <img src="{{ asset(product.imageFilename3) }}" alt="{{ product.name }}" class="product-preview-img">
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-danger btn-sm delete-image-btn" data-image="3">
+                                            <i class="fa fa-trash"></i> Supprimer cette image
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.imageFile4) }}
+                            <div class="help-text">Image quaternaire (optionnelle)</div>
+
+                            {% if product.imageFilename4 %}
+                                <div class="mt-2">
+                                    <p>Image quaternaire actuelle :</p>
+                                    <img src="{{ asset(product.imageFilename4) }}" alt="{{ product.name }}" class="product-preview-img">
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-danger btn-sm delete-image-btn" data-image="4">
+                                            <i class="fa fa-trash"></i> Supprimer cette image
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form_label(form.sizes) }}</label>
+                            <div class="sizes-checkboxes">
+                                {{ form_widget(form.sizes) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form_label(form.colors) }}</label>
+                            <div class="colors-checkboxes">
+                                {{ form_widget(form.colors) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form_widget(form.featured) }}
+                                {{ form_label(form.featured) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form_widget(form.isActive) }}
+                                {{ form_label(form.isActive) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('admin_products') }}" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left"></i> Retour à la liste
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa {{ editMode ? 'fa-save' : 'fa-plus' }}"></i> 
+                            {{ editMode ? 'Enregistrer les modifications' : 'Ajouter le produit' }}
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    // Preview des images lorsqu'un fichier est sélectionné
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion de l'aperçu d'images lors du téléchargement
+        const imageFileInputs = document.querySelectorAll('input[type="file"]');
+
+        imageFileInputs.forEach(function(input, index) {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        // Identifier quel input et créer l'ID approprié pour l'aperçu
+                        const inputId = input.getAttribute('id');
+                        let previewId = 'preview-' + inputId;
+
+                        // Créer ou mettre à jour l'aperçu
+                        let previewImg = document.getElementById(previewId);
+                        if (!previewImg) {
+                            previewImg = document.createElement('img');
+                            previewImg.id = previewId;
+                            previewImg.className = 'product-preview-img mt-2';
+                            previewImg.style.maxWidth = '200px';
+                            previewImg.style.maxHeight = '200px';
+                            previewImg.style.objectFit = 'contain';
+                            previewImg.style.border = '1px solid #dee2e6';
+                            previewImg.style.borderRadius = '5px';
+
+                            // Ajouter l'aperçu après le champ de fichier
+                            const container = input.closest('.col-md-6') || input.parentNode;
+                            container.appendChild(previewImg);
+                        }
+                        previewImg.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Ajouter des pastilles de couleur aux options de couleur dans le formulaire
+        const colorCheckboxes = document.querySelectorAll('.colors-checkboxes .form-check-input');
+
+        colorCheckboxes.forEach(checkbox => {
+            const label = document.querySelector(`label[for="${checkbox.id}"]`);
+
+            if (label) {
+                const colorValue = checkbox.value;
+                // Vérifier si une pastille de couleur existe déjà
+                let colorSwatch = label.querySelector('.admin-color-swatch');
+
+                if (!colorSwatch) {
+                    // Créer et ajouter une pastille de couleur
+                    colorSwatch = document.createElement('span');
+                    colorSwatch.className = `admin-color-swatch color-swatch-${colorValue}`;
+
+                    // Insérer la pastille au début du label
+                    label.insertBefore(colorSwatch, label.firstChild);
+
+                    // Ajouter un petit espace après la pastille
+                    const space = document.createTextNode(' ');
+                    label.insertBefore(space, colorSwatch.nextSibling);
+                }
+            }
+        });
+    });
+
+    // Gestion de la suppression d'images directe
+    const deleteButtons = document.querySelectorAll('.delete-image-btn');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const imageNumber = this.dataset.image;
+            const productId = '{{ product.id }}';
+            
+            // Faire une requête AJAX pour supprimer l'image
+            fetch(`/admin/product/${productId}/delete-image/${imageNumber}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Masquer l'image et le bouton
+                    const imageContainer = this.closest('.mt-2');
+                    if (imageContainer) {
+                        imageContainer.style.display = 'none';
+                    }
+                    
+                    // Afficher un message de succès
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success mt-2';
+                    alertDiv.innerHTML = `<i class="fa fa-check"></i> Image ${imageNumber} supprimée avec succès`;
+                    this.parentNode.appendChild(alertDiv);
+                    
+                    // Supprimer l'alerte après 3 secondes
+                    setTimeout(() => {
+                        alertDiv.remove();
+                    }, 3000);
+                } else {
+                    // Afficher un message d'erreur
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger mt-2';
+                    alertDiv.innerHTML = `<i class="fa fa-exclamation-triangle"></i> Erreur lors de la suppression: ${data.error}`;
+                    this.parentNode.appendChild(alertDiv);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger mt-2';
+                alertDiv.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Erreur de connexion';
+                this.parentNode.appendChild(alertDiv);
+            });
+        });
+    });
+</script>
+{% endblock %}

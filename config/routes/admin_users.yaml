@@ -1,0 +1,11 @@
+admin_admin_user_new:
+  path: /admin/utilisateur/nouveau
+  controller: App\Controller\AdminController::newUser
+
+admin_admin_user_edit:
+  path: /admin/utilisateur/{id}/modifier
+  controller: App\Controller\AdminController::editUser
+
+admin_admin_user_delete:
+  path: /admin/utilisateur/{id}/supprimer
+  controller: App\Controller\AdminController::deleteUser

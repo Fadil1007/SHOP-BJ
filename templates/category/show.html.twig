@@ -1,0 +1,240 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.name }} - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    {# Fil d'Ariane #}
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('category_list') }}">Catégories</a></li>
+            {% if parentCategory %}
+                <li class="breadcrumb-item"><a href="{{ path('category_show', {'id': parentCategory.id}) }}">{{ parentCategory.name }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+        </ol>
+    </nav>
+
+    {# En-tête de la catégorie #}
+    <div class="category-header mb-5">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="mb-3">{{ category.name }}</h1>
+                {% if category.description %}
+                    <p class="lead">{{ category.description }}</p>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if category.headerImageFilename %}
+                    <img src="{{ asset(category.headerImageFilename) }}" alt="{{ category.name }}" class="img-fluid rounded shadow" style="height: 250px; width: 100%; object-fit: cover;">
+                {% elseif productWithImage is defined and productWithImage and productWithImage.imageFilename %}
+                    <img src="{{ asset(productWithImage.imageFilename) }}" alt="{{ category.name }}" class="img-fluid rounded shadow" style="height: 250px; width: 100%; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 250px;">
+                        <span class="h3 text-center p-4">{{ category.name }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Affichage des sous-catégories si la catégorie courante a des enfants #}
+    {% if category.children|length > 0 %}
+    <div class="subcategories-section mb-5">
+        <h3 class="mb-4">Sous-catégories de {{ category.name }}</h3>
+        <div class="row">
+            {% for subcategory in category.children %}
+                <div class="col-6 col-md-3 mb-4">
+                    <a href="{{ path('product_category_by_slug', {'slug': subcategory.slug}) }}" class="text-decoration-none">
+                        <div class="subcategory-card card h-100 border-0 shadow-sm">
+                            {% if subcategory.imageFilename %}
+                                <img src="{{ asset(subcategory.imageFilename) }}" class="card-img-top" alt="{{ subcategory.name }}" style="height: 160px; object-fit: cover;">
+                            {% elseif subcategory.headerImageFilename %}
+                                <img src="{{ asset(subcategory.headerImageFilename) }}" class="card-img-top" alt="{{ subcategory.name }}" style="height: 160px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 160px;">
+                                    <span class="text-center p-3">{{ subcategory.name }}</span>
+                                </div>
+                            {% endif %}
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ subcategory.name }}</h5>
+                                <p class="card-text small text-muted">
+                                    {% set productCount = subcategory.products|length %}
+                                    {{ productCount }} produit{% if productCount != 1 %}s{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Filtres et Tri #}
+    <div class="product-filters mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <p class="mb-0"><strong>{{ products|length }}</strong> produits trouvés</p>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-end">
+                    <div class="dropdown me-3">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Trier par
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item" href="#">Nouveautés</a></li>
+                            <li><a class="dropdown-item" href="#">Prix: croissant</a></li>
+                            <li><a class="dropdown-item" href="#">Prix: décroissant</a></li>
+                            <li><a class="dropdown-item" href="#">Popularité</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="Layout Toggle">
+                        <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="listViewBtn">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Liste des produits #}
+    <div class="row" id="products-grid">
+        {% for product in products %}
+            <div class="col-md-3 mb-4">
+                {% set firstImage = product.imageFilename ?: product.imageFilename2 ?: product.imageFilename3 %}
+                        {% if firstImage %}
+                            <a href="{{ path('product_show', {'id': product.id}) }}">
+                                <img src="{{ asset(firstImage) }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                            </a>
+                        {% else %}
+                            <a href="{{ path('product_show', {'id': product.id}) }}">
+                                <div class="card-img-top product-placeholder d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                                    <i class="fas fa-image fa-3x text-secondary"></i>
+                                </div>
+                            </a>
+                        {% endif %}
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <p class="mb-0">Aucun produit trouvé dans cette catégorie.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {# Vue liste des produits (masquée par défaut) #}
+    <div class="d-none" id="products-list">
+        {% for product in products %}
+            <div class="card mb-3 product-list-card">
+                <div class="row g-0">
+                    <div class="col-md-3">
+                        <div class="h-100">
+                            {% if product.imageFilename %}
+                                <img src="{{ asset(product.imageFilename) }}" alt="{{ product.name }}" class="img-fluid rounded-start h-100" style="object-fit: cover;">
+                            {% else %}
+                                <div class="h-100 d-flex align-items-center justify-content-center bg-light rounded-start">
+                                    <span class="text-center p-3">{{ product.name }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <p class="card-text text-muted small">{{ product.category.name }}</p>
+                                </div>
+                                <div class="product-price text-end">
+                                    {% if product.onSale and product.oldPrice %}
+                                        <div class="old-price text-muted text-decoration-line-through">{{ product.oldPrice|number_format(2, ',', ' ') }} €</div>
+                                        <div class="price text-primary fw-bold">{{ product.price|number_format(2, ',', ' ') }} €</div>
+                                        <span class="badge bg-danger">-{{ product.discountPercentage }}%</span>
+                                    {% else %}
+                                        <div class="price text-primary fw-bold">{{ product.price|number_format(2, ',', ' ') }} €</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <p class="card-text mt-2">
+                                {{ product.shortDescription|slice(0, 150) ~ (product.shortDescription|length > 150 ? '...' : '') }}
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    {% if product.stock > 0 %}
+                                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>En stock</span>
+                                    {% else %}
+                                        <span class="text-danger"><i class="fas fa-times-circle me-1"></i>Rupture de stock</span>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <a href="{{ path('product_show', {'id': product.id}) }}" class="btn btn-outline-primary btn-sm me-2">Détails</a>
+                                    <button class="btn btn-primary btn-sm add-to-cart" data-product-id="{{ product.id }}">
+                                        <i class="fas fa-shopping-cart me-1"></i>Ajouter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Changer de vue (grille/liste)
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+    const productsGrid = document.getElementById('products-grid');
+    const productsList = document.getElementById('products-list');
+
+    gridViewBtn.addEventListener('click', function() {
+        productsGrid.classList.remove('d-none');
+        productsList.classList.add('d-none');
+        gridViewBtn.classList.add('active');
+        listViewBtn.classList.remove('active');
+    });
+
+    listViewBtn.addEventListener('click', function() {
+        productsGrid.classList.add('d-none');
+        productsList.classList.remove('d-none');
+        gridViewBtn.classList.remove('active');
+        listViewBtn.classList.add('active');
+    });
+});
+</script>
+{% endblock %}
+
+<style>
+    .subcategory-card {
+        transition: all 0.3s;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .subcategory-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .product-list-card {
+        transition: all 0.3s;
+    }
+
+    .product-list-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

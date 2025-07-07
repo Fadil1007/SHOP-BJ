@@ -1,0 +1,118 @@
+<?php //b48b1a6cdfc0408641c61eb6cbe03e90
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Doctrine\\ORM\\Query\\ParserResult'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ParserResult')),
+        clone ($p['Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer')),
+        clone ($p['Doctrine\\ORM\\Query\\ResultSetMapping'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ResultSetMapping')),
+    ],
+    null,
+    [
+        'Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer' => [
+            'sql' => [
+                1 => 'SELECT u0_.id AS id_0, u0_.email AS email_1, u0_.username AS username_2, u0_.roles AS roles_3, u0_.password AS password_4, u0_.first_name AS first_name_5, u0_.last_name AS last_name_6, u0_.is_verified AS is_verified_7, u0_.created_at AS created_at_8, u0_.phone_number AS phone_number_9, u0_.address AS address_10, u0_.city AS city_11, u0_.postal_code AS postal_code_12, u0_.country AS country_13 FROM `user` u0_ WHERE u0_.id IN (?)',
+            ],
+        ],
+        'stdClass' => [
+            'aliasMap' => [
+                2 => [
+                    'u' => 'App\\Entity\\User',
+                ],
+            ],
+            'fieldMappings' => [
+                2 => [
+                    'id_0' => 'id',
+                    'email_1' => 'email',
+                    'username_2' => 'username',
+                    'roles_3' => 'roles',
+                    'password_4' => 'password',
+                    'first_name_5' => 'firstName',
+                    'last_name_6' => 'lastName',
+                    'is_verified_7' => 'isVerified',
+                    'created_at_8' => 'createdAt',
+                    'phone_number_9' => 'phoneNumber',
+                    'address_10' => 'address',
+                    'city_11' => 'city',
+                    'postal_code_12' => 'postalCode',
+                    'country_13' => 'country',
+                ],
+            ],
+            'columnAliasMappings' => [
+                2 => [
+                    'App\\Entity\\User' => [
+                        'u' => [
+                            'id' => 'id_0',
+                            'email' => 'email_1',
+                            'username' => 'username_2',
+                            'roles' => 'roles_3',
+                            'password' => 'password_4',
+                            'firstName' => 'first_name_5',
+                            'lastName' => 'last_name_6',
+                            'isVerified' => 'is_verified_7',
+                            'createdAt' => 'created_at_8',
+                            'phoneNumber' => 'phone_number_9',
+                            'address' => 'address_10',
+                            'city' => 'city_11',
+                            'postalCode' => 'postal_code_12',
+                            'country' => 'country_13',
+                        ],
+                    ],
+                ],
+            ],
+            'entityMappings' => [
+                2 => [
+                    'u' => null,
+                ],
+            ],
+            'columnOwnerMap' => [
+                2 => [
+                    'id_0' => 'u',
+                    'email_1' => 'u',
+                    'username_2' => 'u',
+                    'roles_3' => 'u',
+                    'password_4' => 'u',
+                    'first_name_5' => 'u',
+                    'last_name_6' => 'u',
+                    'is_verified_7' => 'u',
+                    'created_at_8' => 'u',
+                    'phone_number_9' => 'u',
+                    'address_10' => 'u',
+                    'city_11' => 'u',
+                    'postal_code_12' => 'u',
+                    'country_13' => 'u',
+                ],
+            ],
+            'declaringClasses' => [
+                2 => [
+                    'id_0' => 'App\\Entity\\User',
+                    'email_1' => 'App\\Entity\\User',
+                    'username_2' => 'App\\Entity\\User',
+                    'roles_3' => 'App\\Entity\\User',
+                    'password_4' => 'App\\Entity\\User',
+                    'first_name_5' => 'App\\Entity\\User',
+                    'last_name_6' => 'App\\Entity\\User',
+                    'is_verified_7' => 'App\\Entity\\User',
+                    'created_at_8' => 'App\\Entity\\User',
+                    'phone_number_9' => 'App\\Entity\\User',
+                    'address_10' => 'App\\Entity\\User',
+                    'city_11' => 'App\\Entity\\User',
+                    'postal_code_12' => 'App\\Entity\\User',
+                    'country_13' => 'App\\Entity\\User',
+                ],
+            ],
+        ],
+    ],
+    $o[0],
+    [
+        [
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlExecutor' => null,
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlFinalizer' => $o[1],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'resultSetMapping' => $o[2],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'parameterMappings' => [
+                'dpid' => [
+                    0,
+                ],
+            ],
+        ],
+    ]
+); }];

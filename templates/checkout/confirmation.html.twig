@@ -1,0 +1,294 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation de commande - {{ site_name }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .payment-status-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+        }
+        .payment-button {
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: bold;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            width: 100%;
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+        .fedapay-button {
+            background-color: #1B5E20;
+        }
+        .fedapay-button:hover {
+            background-color: #2E7D32;
+            color: white;
+        }
+        .cinetpay-button {
+            background-color: #FF6B35;
+        }
+        .cinetpay-button:hover {
+            background-color: #E55A2E;
+            color: white;
+        }
+        .stripe-button {
+            background-color: #6772E5;
+        }
+        .stripe-button:hover {
+            background-color: #4F56BD;
+            color: white;
+        }
+        .payment-logo {
+            height: 1.5rem;
+        }
+        .payment-section {
+            margin-top: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        #payment-result {
+            margin-top: 1rem;
+        }
+        .payment-or {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .payment-or:before,
+        .payment-or:after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+        .payment-or:before {
+            margin-right: 1rem;
+        }
+        .payment-or:after {
+            margin-left: 1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Configuration globale pour les paiements #}
+    <script>
+        console.log('FedaPay configuration:', {{ fedapay_data|default('null')|json_encode|raw }});
+        window.fedaPayConfig = {{ fedapay_data|default('null')|json_encode|raw }};
+    </script>
+
+    <!-- Payment Integration Scripts -->
+    {{ fedapay_script|raw }}
+    <script src="{{ asset('js/fedapay-payment.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {% if order.paymentStatus == 'paid' %}
+            <div class="card mb-4">
+                <div class="card-body text-center p-5">
+                    <div class="confirmation-icon mb-4">
+                        <i class="fas fa-check-circle fa-5x text-success"></i>
+                    </div>
+                    <h1 class="mb-3">Merci pour votre commande!</h1>
+                    <p class="lead">Votre commande a été reçue et est en cours de traitement.</p>
+                    <div class="order-number mb-4">
+                        <span class="fw-bold">Numéro de commande:</span> #{{ order.id }}
+                    </div>
+                    <div class="text-muted mb-4">
+                        Un e-mail de confirmation a été envoyé à <strong>{{ order.email }}</strong>.
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{{ path('app_home') }}" class="btn btn-primary">
+                            Retour à l'accueil
+                        </a>
+                        <a href="{{ path('app_profile_orders') }}" class="btn btn-outline-secondary">
+                            Voir mes commandes
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h2 class="h5 mb-0">Commande #{{ order.id }}</h2>
+                </div>
+                <div class="card-body text-center">
+                    <p class="lead">Votre commande a été enregistrée.</p>
+                    <p>Veuillez procéder au paiement pour finaliser votre achat.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Order Details #}
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h2 class="h5 mb-0">Détails de la commande</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h3 class="h6 mb-3">Informations du client</h3>
+                            <address class="mb-0">
+                                <strong>{{ order.fullName }}</strong><br>
+                                {{ order.city }}<br>
+                                {{ order.country }}<br>
+                                <abbr title="Téléphone">Tél:</abbr> {{ order.phone }}
+                            </address>
+                        </div>
+                        <div class="col-md-6">
+                            <h3 class="h6 mb-3">Informations de commande</h3>
+                            <p class="mb-0">
+                                <strong>Numéro de commande:</strong> #{{ order.id }}<br>
+                                <strong>Date:</strong> {{ order.createdAt|date('d/m/Y') }}<br>
+                                <strong>Statut:</strong> 
+                                <span class="badge bg-info">{{ order.status }}</span><br>
+                                <strong>Total:</strong> {{ order.total|number_format(0, '', ' ') }} FCFA<br>
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3 class="h6 mb-3">Produits commandés</h3>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Quantité</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.orderItems %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3">
+                                                    {% if item.product.imageFilename %}
+                                                        <img src="{{ asset(item.product.imageFilename) }}" alt="{{ item.product.name }}" width="50" class="img-fluid">
+                                                    {% else %}
+                                                        <div class="product-placeholder-img d-flex align-items-center justify-content-center bg-light rounded" style="width: 50px; height: 50px;">
+                                                            <i class="fas fa-tshirt text-secondary"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    {{ item.product.name }}
+                                                    {% if item.size or item.color %}
+                                                        <div class="small text-muted">
+                                                            {% if item.size %}Taille: {{ item.size }}{% endif %}
+                                                            {% if item.color %}{% if item.size %} - {% endif %}Couleur: {{ item.color }}{% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ item.price|number_format(0, '', ' ') }} FCFA</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td class="text-end">{{ (item.price * item.quantity)|number_format(0, '', ' ') }} FCFA</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Sous-total</strong></td>
+                                    <td class="text-end">{{ order.total|number_format(0, '', ' ') }} FCFA</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Livraison</strong></td>
+                                    <td class="text-end">
+                                        <span>À votre charge</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                    <td class="text-end fw-bold">
+                                        {{ order.total|number_format(0, '', ' ') }} FCFA
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {# Payment Section #}
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h2 class="h5 mb-0">Paiement</h2>
+                </div>
+                <div class="card-body">
+                    <div class="payment-status-section">
+                        <h3 class="h6 mb-3">Statut du paiement</h3>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="me-2">Statut actuel:</span>
+                            <span id="payment-status-badge" class="badge 
+                                {% if order.paymentStatus == 'paid' %}bg-success
+                                {% elseif order.paymentStatus == 'pending' %}bg-warning
+                                {% elseif order.paymentStatus == 'failed' or order.paymentStatus == 'FAILED' %}bg-danger
+                                {% elseif order.paymentStatus == 'cancelled' or order.paymentStatus == 'CANCELLED' %}bg-secondary
+                                {% else %}bg-secondary{% endif %}">
+                                {% if order.paymentStatus == 'paid' %}
+                                    Payé
+                                {% elseif order.paymentStatus == 'pending' %}
+                                    En attente
+                                {% elseif order.paymentStatus == 'failed' or order.paymentStatus == 'FAILED' %}
+                                    Refusé
+                                {% elseif order.paymentStatus == 'cancelled' or order.paymentStatus == 'CANCELLED' %}
+                                    Annulé
+                                {% else %}
+                                    {{ order.paymentStatus|default('En attente')|capitalize }}
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div id="payment-result" class="alert {% if order.paymentStatus == 'failed' or order.paymentStatus == 'FAILED' %}alert-danger{% elseif order.paymentStatus == 'cancelled' or order.paymentStatus == 'CANCELLED' %}alert-info{% else %}d-none{% endif %}">
+                            {% if order.paymentStatus == 'failed' or order.paymentStatus == 'FAILED' %}
+                                <i class="fas fa-exclamation-triangle me-2"></i> Votre paiement a été refusé. Cela peut être dû à un problème avec votre carte bancaire ou votre compte. Veuillez vérifier vos informations de paiement et réessayer.
+                            {% elseif order.paymentStatus == 'cancelled' or order.paymentStatus == 'CANCELLED' %}
+                                <i class="fas fa-info-circle me-2"></i> Votre paiement a été annulé. Vous pouvez réessayer quand vous serez prêt.
+                            {% endif %}
+                        </div>
+
+                        {% if order.paymentStatus != 'paid' %}
+                            <div class="payment-section">
+                                <h3 class="h6 mb-3">Procéder au paiement</h3>
+                                <p class="mb-3">Pour finaliser votre commande, veuillez procéder au paiement en utilisant l'une des méthodes ci-dessous:</p>
+
+                                <button id="fedapay-payment-button" class="payment-button fedapay-button btn btn-primary btn-lg w-100" 
+                                    data-order-id="{{ order.id }}"
+                                    data-amount="{{ order.total }}"
+                                    data-name="{{ order.fullName }}"
+                                    data-phone="{{ order.phone }}"
+                                    data-email="{{ order.email }}"
+                                    data-callback="{{ fedapay_data.callbackUrl }}">
+                                    <svg width="100" height="30" viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="payment-logo me-2">
+                                        <rect width="100" height="30" rx="5" fill="#1B5E20"/>
+                                        <text x="50" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="bold">FedaPay</text>
+                                    </svg>
+                                    Payer {{ order.total|number_format(0, '', ' ') }} FCFA par Mobile Money
+                                </button>
+
+                            </div>
+                        {% else %}
+                            <div id="confirmation-message" class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i> Votre paiement a été reçu et votre commande est en cours de traitement.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

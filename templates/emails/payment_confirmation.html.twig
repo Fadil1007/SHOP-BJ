@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de paiement - SHOP BJ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f48120;
+            padding-bottom: 20px;
+        }
+        .logo-text {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f48120, #ff6b35, #f48120);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 10px;
+            animation: gradient 3s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        h1 {
+            color: #f48120;
+        }
+        .payment-success {
+            background-color: #e6f7e6;
+            border: 1px solid #c3e6c3;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .payment-success .icon {
+            color: #5cb85c;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .order-details {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .order-total {
+            text-align: right;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .next-steps {
+            background-color: #f0f7fd;
+            border: 1px solid #d0e3f0;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-text">SHOP BJ</div>
+        <h1>Confirmation de paiement</h1>
+    </div>
+    
+    <div class="payment-success">
+        <div class="icon">✓</div>
+        <h2>Paiement réussi !</h2>
+        <p>Nous avons bien reçu votre paiement pour la commande #{{ order.id }}</p>
+    </div>
+    
+    <p>Cher(e) {{ order.fullName }},</p>
+    
+    <p>Nous vous confirmons que votre paiement de <strong>{{ order.total|number_format(0, ',', ' ') }} FCFA</strong> a été traité avec succès.</p>
+    
+    <div class="order-details">
+        <p><strong>Numéro de commande :</strong> #{{ order.id }}</p>
+        <p><strong>Date :</strong> {{ order.createdAt|date('d/m/Y H:i') }}</p>
+        <p><strong>Mode de paiement :</strong> {{ order.paymentMethod }}</p>
+        {% if order.transactionId %}
+        <p><strong>Numéro de transaction :</strong> {{ order.transactionId }}</p>
+        {% endif %}
+        <p><strong>Total payé :</strong> {{ order.total|number_format(0, ',', ' ') }} FCFA</p>
+    </div>
+    
+    <div class="next-steps">
+        <h3>Prochaines étapes</h3>
+        <ol>
+            <li>Votre commande est en cours de préparation.</li>
+            <li>Vous recevrez une notification lorsque votre commande sera prête à être expédiée.</li>
+            <li>Nous vous informerons par e-mail dès que votre commande sera en cours de livraison.</li>
+        </ol>
+    </div>
+    
+    <p>Pour toute question concernant votre commande, vous pouvez consulter votre historique de commandes sur votre compte ou nous contacter à <a href="mailto:shopbj04@gmail.com">shopbj04@gmail.com</a>.</p>
+    
+    <p>Merci pour votre achat et votre confiance,<br>
+    L'équipe SHOP BJ</p>
+    
+    <div class="footer">
+        <p>&copy; {{ "now"|date("Y") }} SHOP BJ. Tous droits réservés.</p>
+    </div>
+</body>
+</html>

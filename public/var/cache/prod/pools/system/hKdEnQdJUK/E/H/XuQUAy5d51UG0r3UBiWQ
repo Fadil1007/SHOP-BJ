@@ -1,0 +1,87 @@
+<?php //5344f34f8c8f0a1010fbd3d282feea50
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Doctrine\\ORM\\Query\\ParserResult'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ParserResult')),
+        clone ($p['Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer')),
+        clone ($p['Doctrine\\ORM\\Query\\ResultSetMapping'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ResultSetMapping')),
+    ],
+    null,
+    [
+        'Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer' => [
+            'sql' => [
+                1 => 'SELECT w0_.id AS id_0, w0_.created_at AS created_at_1, w0_.user_id AS user_id_2, w0_.product_id AS product_id_3 FROM wishlist w0_ WHERE w0_.user_id = ? AND w0_.product_id = ?',
+            ],
+        ],
+        'stdClass' => [
+            'aliasMap' => [
+                2 => [
+                    'w' => 'App\\Entity\\Wishlist',
+                ],
+            ],
+            'fieldMappings' => [
+                2 => [
+                    'id_0' => 'id',
+                    'created_at_1' => 'createdAt',
+                ],
+            ],
+            'columnAliasMappings' => [
+                2 => [
+                    'App\\Entity\\Wishlist' => [
+                        'w' => [
+                            'id' => 'id_0',
+                            'createdAt' => 'created_at_1',
+                        ],
+                    ],
+                ],
+            ],
+            'typeMappings' => [
+                2 => [
+                    'user_id_2' => 'integer',
+                    'product_id_3' => 'integer',
+                ],
+            ],
+            'entityMappings' => [
+                2 => [
+                    'w' => null,
+                ],
+            ],
+            'metaMappings' => [
+                2 => [
+                    'user_id_2' => 'user_id',
+                    'product_id_3' => 'product_id',
+                ],
+            ],
+            'columnOwnerMap' => [
+                2 => [
+                    'id_0' => 'w',
+                    'created_at_1' => 'w',
+                    'user_id_2' => 'w',
+                    'product_id_3' => 'w',
+                ],
+            ],
+            'declaringClasses' => [
+                2 => [
+                    'id_0' => 'App\\Entity\\Wishlist',
+                    'created_at_1' => 'App\\Entity\\Wishlist',
+                ],
+            ],
+        ],
+    ],
+    $o[0],
+    [
+        [
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlExecutor' => null,
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlFinalizer' => $o[1],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'resultSetMapping' => $o[2],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'parameterMappings' => [
+                'userId' => [
+                    0,
+                ],
+                'productId' => [
+                    1,
+                ],
+            ],
+        ],
+    ]
+); }];

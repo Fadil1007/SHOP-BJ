@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats de recherche pour "{{ query }}" - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    {# Fil d'Ariane #}
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Recherche</li>
+        </ol>
+    </nav>
+
+    {# En-tête #}
+    <div class="search-header mb-5">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-3">Résultats de recherche</h1>
+                {% if query is not empty %}
+                    <p class="lead">Vous avez recherché : <strong>{{ query }}</strong></p>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <form action="{{ path('product_search') }}" method="get" class="search-form">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Rechercher..." 
+                               name="q" value="{{ query }}" required minlength="2">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# Résultats de recherche #}
+    <div class="search-results mb-5">
+        {% if products is not empty %}
+            <p class="mb-3">{{ products|length }} produit(s) trouvé(s)</p>
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-3 mb-4">
+                        {% set firstImage = product.imageFilename ?: product.imageFilename2 ?: product.imageFilename3 %}
+                    {% if firstImage %}
+                        <a href="{{ path('product_show', {'id': product.id}) }}">
+                            <img src="{{ asset(firstImage) }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                        </a>
+                    {% else %}
+                        <a href="{{ path('product_show', {'id': product.id}) }}">
+                            <div class="card-img-top product-placeholder d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-secondary"></i>
+                            </div>
+                        </a>
+                    {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% elseif query is not empty %}
+            <div class="alert alert-info">
+                <p class="mb-0">Aucun produit ne correspond à votre recherche "{{ query }}".</p>
+                <hr>
+                <div class="mt-3">
+                    <h5>Suggestions :</h5>
+                    <ul>
+                        <li>Vérifiez l'orthographe des mots-clés saisis</li>
+                        <li>Essayez des mots-clés plus généraux</li>
+                        <li>Essayez des mots-clés différents</li>
+                        <li>Parcourez nos <a href="{{ path('category_list') }}">catégories</a> pour trouver votre produit</li>
+                    </ul>
+                </div>
+            </div>
+
+            {# Produits à découvrir #}
+            <div class="discover-products mt-5">
+                <h3 class="mb-4">Produits à découvrir</h3>
+                <div class="row">
+                    {% for product in featuredProducts|default([]) %}
+                        <div class="col-md-3 mb-4">
+                            {% include 'components/product_card.html.twig' with {'product': product} %}
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <p class="mb-0">Pas de produits disponibles actuellement.</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="search-hint">
+                <p>Entrez un mot-clé ci-dessus pour rechercher des produits.</p>
+                <p>Vous pouvez rechercher par nom de produit, description, ou marque.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

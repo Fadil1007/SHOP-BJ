@@ -1,0 +1,14 @@
+framework:
+    cache:
+        # Unique name of your app: used to compute stable namespaces for cache keys.
+        prefix_seed: app/shop-bj
+
+        # The "app" cache stores to the filesystem by default.
+        # The data in this cache should persist between deploys.
+        # Other options include:
+        # apcu: APC User Cache (can be enabled only for CLI or FPM)
+        # redis, memcached, pdo, mongodb, filesystem
+        app: cache.adapter.filesystem
+
+        # The default cache pool is system_cache_pool
+        # system: cache.adapter.system

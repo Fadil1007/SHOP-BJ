@@ -1,0 +1,77 @@
+<footer class="footer mt-5 pt-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-title mb-4">{{ site_name }}</h5>
+                <p class="mb-3">Votre destination pour la mode tendance à prix abordables. Découvrez les dernières collections et exprimez votre style unique.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link me-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link me-2"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link me-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-title mb-4">Catégories</h5>
+                <ul class="footer-links list-unstyled">
+                    {% for category in categories|slice(0, 5) %}
+                        <li class="mb-2">
+                            <a href="{{ path('category_show', {'id': category.id}) }}" class="footer-link">
+                                {{ category.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    <li class="mb-2">
+                        <a href="{{ path('product_index') }}" class="footer-link">
+                            Voir tous les produits
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-title mb-4">Informations</h5>
+                <ul class="footer-links list-unstyled">
+                    <li class="mb-2"><a href="#" class="footer-link">À propos de nous</a></li>
+                    <li class="mb-2"><a href="{{ path('terms_of_service') }}" class="footer-link">Conditions générales de vente</a></li>
+                    <li class="mb-2"><a href="{{ path('privacy_policy') }}" class="footer-link">Politique de confidentialité</a></li>
+                    <li class="mb-2"><a href="{{ path('legal_notice') }}" class="footer-link">Mentions légales</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link">FAQ</a></li>
+                    <li class="mb-2"><a href="{{ path('app_contact') }}" class="footer-link">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <h5 class="footer-title mb-4">Moyens de paiement</h5>
+                <p class="mb-3">Nous acceptons plusieurs méthodes de paiement pour votre commodité.</p>
+                <div class="payment-methods mb-4">
+                    <span class="me-2"><i class="fab fa-cc-visa fa-2x"></i></span>
+                    <span class="me-2"><i class="fab fa-cc-mastercard fa-2x"></i></span>
+                    <span class="me-2"><i class="fab fa-cc-paypal fa-2x"></i></span>
+                    <span><i class="fab fa-cc-amex fa-2x"></i></span>
+                </div>
+                <div class="payment-methods">
+                    <span class="me-2"><img src="{{ asset('uploads/payment/kkiapay-logo.svg') }}" alt="KKiaPay" height="30"></span>
+                    <span class="me-2"><img src="{{ asset('uploads/payment/mtn-mobile-money.svg') }}" alt="MTN Mobile Money" height="30" onerror="this.style.display='none'"></span>
+                    <span><img src="{{ asset('uploads/payment/moov-money.svg') }}" alt="Moov Money" height="30" onerror="this.style.display='none'"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom py-3 mt-3 border-top">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">© {{ "now"|date("Y") }} {{ site_name }}. Tous droits réservés.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="footer-bottom-links">
+                        <a href="{{ path('privacy_policy') }}" class="footer-link me-3">Confidentialité</a>
+                        <a href="{{ path('terms_of_service') }}" class="footer-link me-3">CGV</a>
+                        <a href="{{ path('legal_notice') }}" class="footer-link">Mentions légales</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

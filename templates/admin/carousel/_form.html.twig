@@ -1,0 +1,62 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+<div class="row">
+    <div class="col-md-6">
+        <div class="mb-3">
+            {{ form_label(form.title) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.title) }}
+            <div class="form-text">Titre principal affiché sur le slide.</div>
+        </div>
+        
+        <div class="mb-3">
+            {{ form_label(form.subtitle) }}
+            {{ form_widget(form.subtitle, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.subtitle) }}
+            <div class="form-text">Texte secondaire affiché sous le titre (optionnel).</div>
+        </div>
+        
+        <div class="mb-3">
+            {{ form_label(form.position) }}
+            {{ form_widget(form.position, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.position) }}
+            <div class="form-text">Ordre d'affichage du slide (1 = premier).</div>
+        </div>
+        
+        <div class="mb-3 form-check">
+            {{ form_widget(form.active, {'attr': {'class': 'form-check-input'}}) }}
+            {{ form_label(form.active, null, {'label_attr': {'class': 'form-check-label'}}) }}
+            {{ form_errors(form.active) }}
+            <div class="form-text">Activez ou désactivez ce slide sans le supprimer.</div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="mb-3">
+            {{ form_label(form.imageFile) }}
+            {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.imageFile) }}
+            <div class="form-text">Formats recommandés: JPG, PNG. Taille recommandée: 1920x600px.</div>
+        </div>
+        
+        <div class="mb-3">
+            {{ form_label(form.buttonText) }}
+            {{ form_widget(form.buttonText, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.buttonText) }}
+            <div class="form-text">Texte du bouton d'appel à l'action (optionnel).</div>
+        </div>
+        
+        <div class="mb-3">
+            {{ form_label(form.buttonLink) }}
+            {{ form_widget(form.buttonLink, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.buttonLink) }}
+            <div class="form-text">Lien vers lequel le bouton dirigera (optionnel).</div>
+        </div>
+    </div>
+</div>
+
+{{ form_rest(form) }}
+
+<button class="btn btn-primary">
+    <i class="fas fa-save me-1"></i> {{ button_label|default('Enregistrer') }}
+</button>
+{{ form_end(form) }}

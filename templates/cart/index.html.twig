@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Panier - {{ site_name }}{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/cart.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4 border-bottom pb-2">Mon Panier</h1>
+            
+            <div class="notification-container"></div>
+            
+            <div id="cart-container">
+                {% if cart_items is empty %}
+                    <div class="text-center my-5">
+                        <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+                        <h3>Votre panier est vide</h3>
+                        <p class="text-muted">Parcourez notre catalogue pour trouver des produits à ajouter à votre panier.</p>
+                        <a href="{{ path('product_index') }}" class="btn btn-primary mt-3">
+                            <i class="fas fa-shopping-bag me-2"></i> Continuer mes achats
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="cart-table">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 100px;">Image</th>
+                                        <th>Produit</th>
+                                        <th style="width: 120px;">Prix</th>
+                                        <th style="width: 150px;">Quantité</th>
+                                        <th style="width: 120px;">Sous-total</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                        <tr class="cart-item">
+                                            <td>
+                                                {% if item.product.imageFilename %}
+                                                    <img src="{{ asset(item.product.imageFilename) }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-width: 80px;">
+                                                {% else %}
+                                                    <div class="img-thumbnail d-flex align-items-center justify-content-center bg-light" style="width: 80px; height: 80px;">
+                                                        <i class="fas fa-image text-secondary"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <h6 class="mb-1">{{ item.product.name }}</h6>
+                                                {% if item.product.description %}
+                                                    <p class="small text-muted mb-0">
+                                                        {% if item.product.description|length > 50 %}
+                                                            {{ item.product.description|slice(0, 50) ~ '...' }}
+                                                        {% else %}
+                                                            {{ item.product.description }}
+                                                        {% endif %}
+                                                    </p>
+                                                {% endif %}
+                                                <div class="mt-1">
+                                                    <a href="{{ path('product_show', {'id': item.product.id}) }}" class="small text-primary">Voir le produit</a>
+                                                </div>
+                                                {% if item.size or item.color %}
+                                                    <div class="small text-muted">
+                                                        {% if item.size %}Taille: {{ item.size }}{% endif %}
+                                                        {% if item.color %}{% if item.size %} - {% endif %}Couleur: {{ item.color }}{% endif %}
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.product.isOnSale %}
+                                                    <span class="old-price text-muted d-block"><del>{{ item.product.oldPrice|format_fcfa }}</del></span>
+                                                    <span class="sale-price text-danger fw-bold">{{ item.product.price|format_fcfa }}</span>
+                                                {% else %}
+                                                    <span class="fw-bold">{{ item.product.price|format_fcfa }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <button type="button" class="input-group-text btn btn-outline-secondary decrement" data-item-id="{{ item.id }}">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                    <input type="number" class="form-control text-center cart-quantity-input" 
+                                                           min="1" max="{{ item.product.stock|default(10) }}" value="{{ item.quantity }}"
+                                                           data-item-id="{{ item.id }}"
+                                                           data-product-id="{{ item.product.id }}"
+                                                           data-size="{{ item.size }}"
+                                                           data-color="{{ item.color }}">
+                                                    <button type="button" class="input-group-text btn btn-outline-secondary increment" data-item-id="{{ item.id }}">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold" id="item-total-{{ item.product.id }}" data-value="{{ (item.product.price * item.quantity) }}">
+                                                    {{ (item.product.price * item.quantity)|format_fcfa }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger cart-remove-item" 
+                                                        data-item-id="{{ item.id }}"
+                                                        data-product-id="{{ item.product.id }}"
+                                                        data-size="{{ item.size }}"
+                                                        data-color="{{ item.color }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4" class="text-end fw-bold">Total :</td>
+                                        <td class="fw-bold fs-5 text-primary" id="cart-total">{{ total|format_fcfa }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="cart-actions d-flex justify-content-between mt-4">
+                        <div>
+                            <a href="{{ path('product_index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Continuer mes achats
+                            </a>
+                            <button id="clear-cart-btn" class="btn btn-outline-danger ms-2">
+                                <i class="fas fa-trash me-2"></i> Vider le panier
+                            </button>
+                        </div>
+                        <div>
+                            {% if app.user %}
+                                <a href="{{ path('checkout_index') }}" class="btn btn-primary">
+                                    <i class="fas fa-check-circle me-2"></i> Passer la commande
+                                </a>
+                            {% else %}
+                                <a href="{{ path('user_login') }}" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Connectez-vous pour commander
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Maintenance en cours - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container text-center my-5 py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <img src="{{ asset('uploads/logo/logo-shop-bj.svg') }}" alt="SHOP BJ" class="mb-4" style="max-width: 200px;">
+                    
+                    <h1 class="my-4 text-primary">Site en maintenance</h1>
+                    
+                    <div class="my-5">
+                        <div class="spinner-border text-primary mb-4" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        
+                        <p class="lead">Notre site est actuellement en maintenance pour améliorer votre expérience.</p>
+                        <p>Nous serons de retour très bientôt avec de nouvelles fonctionnalités et améliorations.</p>
+                        <p class="text-muted">Merci de votre compréhension.</p>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <p class="text-muted">
+                            <small>Pour toute urgence ou question, veuillez nous contacter par email</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

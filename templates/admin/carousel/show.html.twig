@@ -1,0 +1,124 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Détails Slide - Administration{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Détails du slide</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ path('admin_index') }}">Tableau de bord</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_carousel_index') }}">Carousel</a></li>
+        <li class="breadcrumb-item active">Détails</li>
+    </ol>
+    
+    {% for flash_success in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">{{ flash_success }}</div>
+    {% endfor %}
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-image me-1"></i>
+                    Image du slide
+                </div>
+                <div class="card-body text-center">
+                    {% if carousel.imageFilename %}
+                        <img src="{{ asset(carousel.imageFilename) }}" alt="{{ carousel.title }}" class="img-fluid" style="max-height: 400px;">
+                    {% else %}
+                        <div class="alert alert-warning">
+                            Aucune image associée à ce slide
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Informations du slide
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 30%">ID</th>
+                                    <td>{{ carousel.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Titre</th>
+                                    <td>{{ carousel.title }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Sous-titre</th>
+                                    <td>{{ carousel.subtitle|default('Non défini') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Position</th>
+                                    <td>{{ carousel.position }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Statut</th>
+                                    <td>
+                                        {% if carousel.active %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Texte du bouton</th>
+                                    <td>{{ carousel.buttonText|default('Non défini') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Lien du bouton</th>
+                                    <td>
+                                        {% if carousel.buttonLink %}
+                                            <a href="{{ carousel.buttonLink }}" target="_blank">{{ carousel.buttonLink }}</a>
+                                        {% else %}
+                                            Non défini
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Fichier image</th>
+                                    <td>{{ carousel.imageFilename|default('Aucun fichier') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Date de création</th>
+                                    <td>{{ carousel.createdAt ? carousel.createdAt|date('d/m/Y H:i') : '' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Dernière modification</th>
+                                    <td>{{ carousel.updatedAt ? carousel.updatedAt|date('d/m/Y H:i') : '' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-4">
+        <div class="d-flex gap-2">
+            <a href="{{ path('admin_carousel_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+            </a>
+            <a href="{{ path('admin_carousel_edit', {'id': carousel.id}) }}" class="btn btn-primary">
+                <i class="fas fa-edit me-1"></i> Modifier
+            </a>
+            <form method="post" action="{{ path('admin_carousel_delete', {'id': carousel.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce slide ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ carousel.id) }}">
+                <button class="btn btn-danger">
+                    <i class="fas fa-trash-alt me-1"></i> Supprimer
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification admin - Nouvelle commande</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f48120;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .logo-text {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ffffff, #ffcc99, #ffffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 10px;
+            animation: gradient 3s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .alert {
+            background-color: #f5f5f5;
+            border-left: 4px solid #f48120;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .order-details {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .order-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .order-items th, .order-items td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .order-items th {
+            background-color: #f48120;
+            color: white;
+        }
+        .order-total {
+            text-align: right;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .customer-info {
+            background-color: #f0f7fd;
+            border: 1px solid #d0e3f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .action-button {
+            display: inline-block;
+            background-color: #f48120;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-text">SHOP BJ</div>
+        <h1>Notification Administrateur</h1>
+    </div>
+    
+    <div class="alert">
+        {% if paymentValidated is defined and paymentValidated %}
+        <strong>Détails d'une commande payée</strong>
+        <p>Voici les détails complets d'une commande dont le paiement a été validé sur SHOP BJ.</p>
+        {% else %}
+        <strong>Nouvelle commande reçue</strong>
+        <p>Une nouvelle commande a été créée sur SHOP BJ.</p>
+        {% endif %}
+    </div>
+    
+    <div class="order-details">
+        <h2>Détails de la commande #{{ order.id }}</h2>
+        <p><strong>Date de création :</strong> {{ order.createdAt|date('d/m/Y H:i') }}</p>
+        <p><strong>Statut :</strong> {{ order.status }}</p>
+        <p><strong>Méthode de paiement :</strong> {{ order.paymentMethod }}</p>
+        <p><strong>Statut du paiement :</strong> {{ order.paymentStatus }}</p>
+        {% if order.transactionId %}
+        <p><strong>Numéro de transaction :</strong> {{ order.transactionId }}</p>
+        {% endif %}
+    </div>
+    
+    <div class="customer-info">
+        <h3>Informations client</h3>
+        <p><strong>Nom :</strong> {{ order.fullName }}</p>
+        <p><strong>Email :</strong> {{ order.email }}</p>
+        <p><strong>Téléphone :</strong> {{ order.phone }}</p>
+        <p><strong>Ville :</strong> {{ order.city }}</p>
+        <p><strong>Pays :</strong> {{ order.country }}</p>
+    </div>
+    
+    <h3>Articles commandés</h3>
+    
+    <table class="order-items">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.orderItems %}
+            <tr>
+                <td>
+                    {{ item.product.name }}
+                    {% if item.size %}
+                    <br><small>Taille: {{ item.size }}</small>
+                    {% endif %}
+                    {% if item.color %}
+                    <br><small>Couleur: {{ item.color }}</small>
+                    {% endif %}
+                </td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price|number_format(0, ',', ' ') }} FCFA</td>
+                <td>{{ (item.price * item.quantity)|number_format(0, ',', ' ') }} FCFA</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="order-total">
+        Total : {{ order.total|number_format(0, ',', ' ') }} FCFA
+    </div>
+    
+    <center>
+        <a href="https://myshopbj.com/admin/orders/{{ order.id }}" class="action-button">Voir la commande dans le tableau de bord</a>
+    </center>
+    
+    <div class="footer">
+        <p>Cet email est généré automatiquement, merci de ne pas y répondre.</p>
+        <p>&copy; {{ "now"|date("Y") }} SHOP BJ Admin. Tous droits réservés.</p>
+    </div>
+</body>
+</html>

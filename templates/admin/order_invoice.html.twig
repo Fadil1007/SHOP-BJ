@@ -1,0 +1,185 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Facture commande #{{ order.id }} - SHOP BJ{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .invoice {
+        background: white;
+        border: 1px solid #f0f0f0;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    .invoice-header {
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+    .invoice-title {
+        font-size: 1.5rem;
+        color: #333;
+    }
+    .invoice-details {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+    .invoice-details-col {
+        flex: 0 0 48%;
+    }
+    .invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+    }
+    .invoice-table th, .invoice-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .invoice-table thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #e9ecef;
+        text-align: left;
+    }
+    .invoice-totals {
+        width: 100%;
+        max-width: 400px;
+        margin-left: auto;
+    }
+    .invoice-totals td {
+        padding: 0.5rem;
+    }
+    .invoice-totals td:last-child {
+        text-align: right;
+        font-weight: 500;
+    }
+    .invoice-footer {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    @media print {
+        body {
+            font-size: 12pt;
+        }
+        .no-print {
+            display: none;
+        }
+        .container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        .invoice {
+            border: none;
+            padding: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+        <h1>Facture</h1>
+        <div>
+            <a href="{{ path('admin_order_view', {'id': order.id}) }}" class="btn btn-outline-primary me-2">
+                <i class="fa fa-arrow-left"></i> Retour
+            </a>
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="fa fa-print"></i> Imprimer
+            </button>
+        </div>
+    </div>
+    
+    <div class="invoice">
+        <div class="invoice-header d-flex justify-content-between align-items-center">
+            <div>
+                <img src="{{ asset('uploads/logo/logo-shop-bj.svg') }}" alt="SHOP BJ" height="50" class="mb-2">
+                <h1 class="invoice-title">FACTURE</h1>
+            </div>
+            <div class="text-end">
+                <p class="mb-0">Commande #{{ order.id }}</p>
+                <p class="mb-0">Date : {{ order.createdAt|date('d/m/Y') }}</p>
+            </div>
+        </div>
+        
+        <div class="invoice-details">
+            <div class="invoice-details-col">
+                <h5>Client</h5>
+                <p class="mb-0">{{ user.firstName }} {{ user.lastName }}</p>
+                <p class="mb-0">{{ user.email }}</p>
+                {% if order.phone %}
+                    <p class="mb-0">Téléphone : {{ order.phone }}</p>
+                {% endif %}
+                <p class="mb-0">{{ order.address|default(user.address)|default('') }}</p>
+                <p class="mb-0">{{ order.city|default(user.city)|default('') }}</p>
+                <p class="mb-0">{{ order.country|default(user.country)|default('Bénin') }}</p>
+            </div>
+            <div class="invoice-details-col text-end">
+                <h5>SHOP BJ</h5>
+                <p class="mb-0">Service Client</p>
+                <p class="mb-0">contact@shopbj.bj</p>
+                <p class="mb-0">Tel: +229 xx xx xx xx</p>
+                <p class="mb-0">Cotonou, Bénin</p>
+            </div>
+        </div>
+        
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th class="text-center">Prix unitaire</th>
+                    <th class="text-center">Quantité</th>
+                    <th class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.orderItems %}
+                    <tr>
+                        <td>
+                            {% if item.product %}{{ item.product.name }}{% else %}Produit supprimé{% endif %}
+                            {% if item.size or item.color %}
+                                <small class="text-muted d-block">
+                                    {% if item.size %}Taille: {{ item.size }}{% endif %}
+                                    {% if item.color %}{% if item.size %} / {% endif %}Couleur: {{ item.color }}{% endif %}
+                                </small>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">{{ item.price|format_currency('XOF') }}</td>
+                        <td class="text-center">{{ item.quantity }}</td>
+                        <td class="text-end">{{ (item.price * item.quantity)|format_currency('XOF') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="invoice-totals ms-auto">
+            <table class="table table-borderless">
+                <tr>
+                    <td>Sous-total:</td>
+                    <td>{{ order.total|format_currency('XOF') }}</td>
+                </tr>
+                <tr>
+                    <td>Livraison:</td>
+                    <td>À vos charges</td>
+                </tr>
+                <tr class="fw-bold">
+                    <td>Total:</td>
+                    <td>{{ order.total|format_currency('XOF') }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="invoice-footer">
+            <p class="mb-0">Merci pour votre achat chez SHOP BJ!</p>
+            <p class="mb-0">Pour toute question concernant cette facture, veuillez contacter notre service client.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

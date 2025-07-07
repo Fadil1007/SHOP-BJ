@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.name }} - {{ site_name }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('product_index') }}">Produits</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+        </ol>
+    </nav>
+    
+    <h1 class="mb-4">{{ category.name }}</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <p class="text-muted">Affichage de {{ products|length }} produit(s) dans cette catégorie</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <div class="d-flex justify-content-md-end">
+                <select class="form-select form-select-sm me-2" style="width: auto;">
+                    <option>Trier par défaut</option>
+                    <option>Prix croissant</option>
+                    <option>Prix décroissant</option>
+                    <option>Nouveautés</option>
+                </select>
+                <select class="form-select form-select-sm" style="width: auto;">
+                    <option>12 par page</option>
+                    <option>24 par page</option>
+                    <option>48 par page</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% if products is defined and products is not empty %}
+            {% for product in products %}
+                <div class="col-lg-3 col-md-4 col-6 mb-4">
+                    <div class="card product-card h-100">
+                        {% if product.imageName %}
+                            <img src="{{ asset('uploads/products/' ~ product.imageName) }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="card-img-top product-placeholder d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-secondary"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <h5 class="card-title product-title">{{ product.name }}</h5>
+                            <p class="card-text product-price">
+                                {% if product.onSale and product.oldPrice %}
+                                    <span class="old-price text-danger">{{ product.oldPrice|format_fcfa }}</span>
+                                    <span class="price text-success fw-bold">{{ product.price|format_fcfa }}</span>
+                                    <span class="discount-badge badge bg-danger">-{{ product.discountPercentage|round }}%</span>
+                                {% else %}
+                                    <span class="price">{{ product.price|format_fcfa }}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
+                            <a href="{{ path('product_show', {'id': product.id}) }}" class="btn btn-sm btn-primary">Voir</a>
+                            <a href="#" class="btn btn-sm btn-outline-primary add-to-cart-btn" data-product-id="{{ product.id }}">
+                                <i class="fas fa-shopping-cart"></i> Ajouter
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> Aucun produit disponible dans cette catégorie pour le moment.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Suivant</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endblock %}

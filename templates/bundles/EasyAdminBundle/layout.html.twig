@@ -1,0 +1,22 @@
+{# This template extends the default EasyAdmin layout and overrides some blocks to customize the appearance #}
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block header_custom_menu %}
+    {{ parent() }}
+    {# Vous pouvez ajouter des éléments personnalisés au menu de l'en-tête ici #}
+{% endblock %}
+
+{% block content_title %}
+    {{ parent() }}
+    {# Vous pouvez personnaliser le titre du contenu ici #}
+{% endblock %}
+
+{% block main %}
+    {{ parent() }}
+    {# Vous pouvez ajouter du contenu supplémentaire au bloc principal ici #}
+{% endblock %}
+
+{% block body_javascript %}
+    {{ parent() }}
+    {# Vous pouvez ajouter des scripts JavaScript personnalisés ici #}
+{% endblock %}

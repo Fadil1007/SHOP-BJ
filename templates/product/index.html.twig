@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Découvrez notre collection de mode - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    {# Section Produits en Vedette #}
+    <section class="mb-5">
+        <h2 class="text-center mb-4">PRODUITS EN VEDETTE</h2>
+        <div class="row">
+            {% for product in featuredProducts %}
+                <div class="col-md-3 mb-4">
+                    {% include 'components/product_card.html.twig' with {'product': product} %}
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>Aucun produit en vedette disponible.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# Section Soldes #}
+    <section class="mb-5">
+        <h2 class="text-center mb-4">SOLDES</h2>
+        <div class="row">
+            {% for product in saleProducts %}
+                <div class="col-md-3 mb-4">
+                    {% include 'components/product_card.html.twig' with {'product': product} %}
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>Aucun produit en solde disponible.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# Section Nouveautés #}
+    <section class="mb-5">
+        <h2 class="text-center mb-4">NOUVEAUTÉS</h2>
+        <div class="row">
+            {% for product in newProducts %}
+                <div class="col-md-3 mb-4">
+                    {% include 'components/product_card.html.twig' with {'product': product} %}
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>Aucun nouveau produit disponible.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# Section Découvrez nos Catégories #}
+    <section class="mb-5">
+        <h2 class="text-center mb-4">DÉCOUVREZ NOS CATÉGORIES</h2>
+        <div class="row">
+            {% for category in featuredCategories %}
+                <div class="col-md-4 mb-4">
+                    <div class="card category-card h-100">
+                        {# Utilisation de la fonction normalize_asset_path pour normaliser les chemins d'images #}
+                        <a href="{{ path('category_show', {'id': category.id}) }}">
+                            <img src="{{ asset(normalize_asset_path(category.imageFilename)) }}?v={{ random() }}" class="card-img-top" alt="{{ category.name }}" style="cursor: pointer;">
+                        </a>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ category.name }}</h5>
+                            <p class="card-text">{{ category.description|slice(0, 60) ~ (category.description|length > 60 ? '...' : '') }}</p>
+                            <a href="{{ path('category_show', {'id': category.id}) }}" class="btn btn-outline-primary">Découvrir</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

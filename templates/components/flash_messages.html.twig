@@ -1,0 +1,51 @@
+{% set flashMessagesPublic = app.request.attributes.get('flashMessagesPublic', []) %}
+
+{# Messages flash personnalisés - Fermeture manuelle avec réapparition #}
+{% if flashMessagesPublic|length > 0 %}
+    <div id="flash-messages-container" class="container-fluid mt-3">
+        {% for flashMessage in flashMessagesPublic %}
+            <div class="alert alert-{{ flashMessage.type }} alert-dismissible fade show flash-message-closable" 
+                 role="alert" 
+                 data-flash-id="{{ flashMessage.id }}"
+                 style="position: relative;">
+                {% if flashMessage.title %}
+                    <strong>{{ flashMessage.title }}</strong>
+                {% endif %}
+                {% if flashMessage.message %}
+                    {% if flashMessage.title %}<br>{% endif %}
+                    {{ flashMessage.message|raw }}
+                {% endif %}
+                <button type="button" class="btn-close" 
+                        aria-label="Close" 
+                        onclick="closeFlashMessage({{ flashMessage.id }})">
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <style>
+    .flash-message-closable {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    .flash-message-hidden {
+        display: none !important;
+    }
+    </style>
+
+    <script>
+    // Gestion de la fermeture manuelle des messages flash
+    function closeFlashMessage(messageId) {
+        const messageElement = document.querySelector(`[data-flash-id="${messageId}"]`);
+        if (messageElement) {
+            messageElement.classList.add('flash-message-hidden');
+            console.log('Message flash fermé:', messageId);
+        }
+    }
+
+    // Les messages réapparaissent automatiquement à chaque actualisation
+    // car ils ne sont pas supprimés définitivement, juste cachés temporairement
+    console.log('Messages flash: {{ flashMessagesPublic|length }} message(s) affiché(s)');
+    </script>
+{% endif %}

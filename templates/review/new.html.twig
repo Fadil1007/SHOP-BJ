@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un avis - {{ product.name }} - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                    {% if product.category %}
+                        <li class="breadcrumb-item"><a href="{{ path('category_show', {'id': product.category.id}) }}">{{ product.category.name }}</a></li>
+                    {% endif %}
+                    <li class="breadcrumb-item"><a href="{{ path('product_show', {'id': product.id}) }}">{{ product.name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Ajouter un avis</li>
+                </ol>
+            </nav>
+            
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4">Donner votre avis sur {{ product.name }}</h1>
+                    
+                    <div class="d-flex align-items-center mb-4">
+                        <img src="{{ asset(product.imageFilename) }}" alt="{{ product.name }}" class="img-fluid me-3" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                        <div>
+                            <h2 class="h5 mb-1">{{ product.name }}</h2>
+                            <p class="text-muted mb-0">{{ product.price|format_fcfa }}</p>
+                        </div>
+                    </div>
+                    
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    
+                    <form method="post" action="{{ path('app_review_new', {'productId': product.id}) }}">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Note <span class="text-danger">*</span></label>
+                            <div class="rating-select mb-2">
+                                <div class="btn-group" role="group" aria-label="Note">
+                                    {% for star in 1..5 %}
+                                        <input type="radio" class="btn-check" name="rating" id="rating-{{ star }}" value="{{ star }}" required>
+                                        <label class="btn btn-outline-warning" for="rating-{{ star }}">
+                                            {{ star }} <i class="fas fa-star"></i>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <small class="text-muted">Sélectionnez une note de 1 à 5 étoiles</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="title" class="form-label fw-bold">Titre de l'avis <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Résumez votre expérience en une phrase" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="content" class="form-label fw-bold">Détail de l'avis <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="content" name="content" rows="5" placeholder="Partagez votre expérience avec ce produit..." required></textarea>
+                            <small class="text-muted">Minimum 10 caractères</small>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ path('product_show', {'id': product.id}) }}" class="btn btn-outline-secondary">Annuler</a>
+                            <button type="submit" class="btn btn-primary">Publier l'avis</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sélection des étoiles avec une meilleure expérience utilisateur
+    const ratingInputs = document.querySelectorAll('input[name="rating"]');
+    const ratingLabels = document.querySelectorAll('.rating-select label');
+    
+    // Ajouter une classe active aux étoiles sélectionnées et à celles avant
+    ratingInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const selectedValue = parseInt(this.value);
+            
+            ratingLabels.forEach((label, index) => {
+                if (index < selectedValue) {
+                    label.classList.add('active');
+                    label.classList.add('btn-warning');
+                    label.classList.remove('btn-outline-warning');
+                } else {
+                    label.classList.remove('active');
+                    label.classList.remove('btn-warning');
+                    label.classList.add('btn-outline-warning');
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

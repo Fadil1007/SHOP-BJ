@@ -1,0 +1,177 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Avis sur {{ product.name }} - BoutiqueMode{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('app_category_show', {'id': product.category.id}) }}">{{ product.category.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('app_product_show', {'id': product.id}) }}">{{ product.name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Avis clients</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="d-flex align-items-center">
+                <a href="{{ path('app_product_show', {'id': product.id}) }}">
+                    <img src="{{ asset(product.imageFilename) }}" alt="{{ product.name }}" class="img-fluid product-thumbnail-small me-3" style="max-width: 100px;">
+                </a>
+                <div>
+                    <h1 class="h2 mb-0">{{ product.name }}</h1>
+                    <div class="d-flex align-items-center mt-2">
+                        <div class="rating-stars">
+                            {% for i in 1..5 %}
+                                {% if i <= averageRating %}
+                                    <i class="bi bi-star-fill text-success"></i>
+                                {% elseif i <= averageRating + 0.5 %}
+                                    <i class="bi bi-star-half text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-star text-success"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="ms-2 text-muted">{{ averageRating|number_format(1) }} sur 5 ({{ reviewCount }} avis)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-outline-success">
+                <i class="bi bi-arrow-left"></i> Retour au produit
+            </a>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('app_product_show', {'id': product.id, 'reviewForm': 'open'}) }}" class="btn btn-success ms-2">
+                    <i class="bi bi-pencil"></i> Écrire un avis
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Résumé des notes</h2>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="display-4 fw-bold me-3">{{ averageRating|number_format(1) }}</div>
+                        <div>
+                            <div class="rating-stars mb-1">
+                                {% for i in 1..5 %}
+                                    {% if i <= averageRating %}
+                                        <i class="bi bi-star-fill text-success"></i>
+                                    {% elseif i <= averageRating + 0.5 %}
+                                        <i class="bi bi-star-half text-success"></i>
+                                    {% else %}
+                                        <i class="bi bi-star text-success"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <span class="text-muted">{{ reviewCount }} avis</span>
+                        </div>
+                    </div>
+                    
+                    {% set ratings = {
+                        '5': reviews|filter(review => review.rating == 5)|length,
+                        '4': reviews|filter(review => review.rating == 4)|length,
+                        '3': reviews|filter(review => review.rating == 3)|length,
+                        '2': reviews|filter(review => review.rating == 2)|length,
+                        '1': reviews|filter(review => review.rating == 1)|length
+                    } %}
+                    
+                    {% for star in 5..1 %}
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="me-2">{{ star }} <i class="bi bi-star-fill small text-success"></i></span>
+                            <div class="progress flex-grow-1" style="height: 8px;">
+                                {% set percentage = reviewCount > 0 ? (ratings[star|string] / reviewCount * 100) : 0 %}
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ percentage }}%;" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span class="ms-2 small text-muted">{{ ratings[star|string] }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="card d-none d-lg-block">
+                <div class="card-body">
+                    <h3 class="h5 mb-3">Informations produit</h3>
+                    <p class="small">{{ product.shortDescription }}</p>
+                    <div class="d-grid">
+                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-success">
+                            Voir le produit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <h2 class="h4 mb-3">Avis clients ({{ reviewCount }})</h2>
+            
+            {% if reviews is empty %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Ce produit n'a pas encore reçu d'avis. Soyez le premier à partager votre expérience !
+                </div>
+            {% else %}
+                {% for review in reviews %}
+                    <div class="card mb-3 review-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <div class="rating-stars">
+                                    {% for i in 1..5 %}
+                                        {% if i <= review.rating %}
+                                            <i class="bi bi-star-fill text-success"></i>
+                                        {% else %}
+                                            <i class="bi bi-star text-success"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted">{{ review.createdAt|date('d/m/Y') }}</small>
+                            </div>
+                            
+                            {% if review.title %}
+                                <h3 class="h5 mb-2">{{ review.title }}</h3>
+                            {% endif %}
+                            
+                            <p class="mb-3">{{ review.comment|nl2br }}</p>
+                            
+                            {% if review.images and review.images|length > 0 %}
+                                <div class="review-images mb-3">
+                                    <div class="row g-2">
+                                        {% for image in review.images %}
+                                            <div class="col-auto">
+                                                <img src="{{ asset('uploads/reviews/' ~ image) }}" class="img-thumbnail review-image" alt="Image utilisateur" style="width: 80px; height: 80px; object-fit: cover;">
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-flex align-items-center">
+                                <small class="text-muted">Par {{ review.user.fullName ?: 'Utilisateur' }}</small>
+                                
+                                {% if app.user and (app.user.id == review.user.id or is_granted('ROLE_ADMIN')) %}
+                                    <div class="ms-auto">
+                                        <a href="{{ path('app_review_delete', {'id': review.id}) }}" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')">
+                                            <i class="bi bi-trash"></i> Supprimer
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

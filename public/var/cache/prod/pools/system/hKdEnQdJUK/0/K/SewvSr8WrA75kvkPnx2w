@@ -1,0 +1,102 @@
+<?php //98b462f346375396dd1813ef94847ee6
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Doctrine\\ORM\\Query\\ParserResult'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ParserResult')),
+        clone ($p['Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer')),
+        clone ($p['Doctrine\\ORM\\Query\\ResultSetMapping'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Doctrine\\ORM\\Query\\ResultSetMapping')),
+    ],
+    null,
+    [
+        'Doctrine\\ORM\\Query\\Exec\\SingleSelectSqlFinalizer' => [
+            'sql' => [
+                1 => 'SELECT c0_.id AS id_0, c0_.title AS title_1, c0_.subtitle AS subtitle_2, c0_.position AS position_3, c0_.active AS active_4, c0_.button_text AS button_text_5, c0_.button_link AS button_link_6, c0_.image_filename AS image_filename_7, c0_.created_at AS created_at_8, c0_.updated_at AS updated_at_9 FROM carousel c0_ WHERE c0_.active = ? ORDER BY c0_.position ASC',
+            ],
+        ],
+        'stdClass' => [
+            'aliasMap' => [
+                2 => [
+                    'c' => 'App\\Entity\\Carousel',
+                ],
+            ],
+            'fieldMappings' => [
+                2 => [
+                    'id_0' => 'id',
+                    'title_1' => 'title',
+                    'subtitle_2' => 'subtitle',
+                    'position_3' => 'position',
+                    'active_4' => 'active',
+                    'button_text_5' => 'buttonText',
+                    'button_link_6' => 'buttonLink',
+                    'image_filename_7' => 'imageFilename',
+                    'created_at_8' => 'createdAt',
+                    'updated_at_9' => 'updatedAt',
+                ],
+            ],
+            'columnAliasMappings' => [
+                2 => [
+                    'App\\Entity\\Carousel' => [
+                        'c' => [
+                            'id' => 'id_0',
+                            'title' => 'title_1',
+                            'subtitle' => 'subtitle_2',
+                            'position' => 'position_3',
+                            'active' => 'active_4',
+                            'buttonText' => 'button_text_5',
+                            'buttonLink' => 'button_link_6',
+                            'imageFilename' => 'image_filename_7',
+                            'createdAt' => 'created_at_8',
+                            'updatedAt' => 'updated_at_9',
+                        ],
+                    ],
+                ],
+            ],
+            'entityMappings' => [
+                2 => [
+                    'c' => null,
+                ],
+            ],
+            'columnOwnerMap' => [
+                2 => [
+                    'id_0' => 'c',
+                    'title_1' => 'c',
+                    'subtitle_2' => 'c',
+                    'position_3' => 'c',
+                    'active_4' => 'c',
+                    'button_text_5' => 'c',
+                    'button_link_6' => 'c',
+                    'image_filename_7' => 'c',
+                    'created_at_8' => 'c',
+                    'updated_at_9' => 'c',
+                ],
+            ],
+            'declaringClasses' => [
+                2 => [
+                    'id_0' => 'App\\Entity\\Carousel',
+                    'title_1' => 'App\\Entity\\Carousel',
+                    'subtitle_2' => 'App\\Entity\\Carousel',
+                    'position_3' => 'App\\Entity\\Carousel',
+                    'active_4' => 'App\\Entity\\Carousel',
+                    'button_text_5' => 'App\\Entity\\Carousel',
+                    'button_link_6' => 'App\\Entity\\Carousel',
+                    'image_filename_7' => 'App\\Entity\\Carousel',
+                    'created_at_8' => 'App\\Entity\\Carousel',
+                    'updated_at_9' => 'App\\Entity\\Carousel',
+                ],
+            ],
+        ],
+    ],
+    $o[0],
+    [
+        [
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlExecutor' => null,
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'sqlFinalizer' => $o[1],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'resultSetMapping' => $o[2],
+            "\0".'Doctrine\\ORM\\Query\\ParserResult'."\0".'parameterMappings' => [
+                'active' => [
+                    0,
+                ],
+            ],
+        ],
+    ]
+); }];

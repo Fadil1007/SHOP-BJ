@@ -1,0 +1,13 @@
+{# Barre de recherche globale avec fond transparent #}
+<div class="global-search-bar">
+    <div class="container">
+        <form action="{{ path('product_search') }}" method="get" class="d-flex justify-content-center">
+            <div class="input-group search-input-container">
+                <input type="text" name="q" class="form-control form-control-lg search-input" placeholder="Rechercher un produit..." required minlength="2">
+                <button class="btn btn-primary btn-lg search-button" type="submit">
+                    <i class="fas fa-search"></i> <span class="d-none d-md-inline">Rechercher</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

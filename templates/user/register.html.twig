@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - {{ site_name }}{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h1 class="h4 mb-0">Créer un compte</h1>
+                </div>
+                <div class="card-body">
+                    {{ form_start(registration_form) }}
+                    
+                    <div class="mb-3">
+                        {{ form_label(registration_form.email) }}
+                        {{ form_widget(registration_form.email) }}
+                        {{ form_errors(registration_form.email) }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(registration_form.firstName) }}
+                            {{ form_widget(registration_form.firstName) }}
+                            {{ form_errors(registration_form.firstName) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(registration_form.lastName) }}
+                            {{ form_widget(registration_form.lastName) }}
+                            {{ form_errors(registration_form.lastName) }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(registration_form.plainPassword.first) }}
+                        {{ form_widget(registration_form.plainPassword.first) }}
+                        {{ form_errors(registration_form.plainPassword.first) }}
+                        <small class="form-text text-muted">Votre mot de passe doit contenir au moins 8 caractères, une lettre majuscule et un symbole spécial.</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(registration_form.plainPassword.second) }}
+                        {{ form_widget(registration_form.plainPassword.second) }}
+                        {{ form_errors(registration_form.plainPassword.second) }}
+                    </div>
+                    
+                    <div class="mb-4 form-check">
+                        {{ form_widget(registration_form.agreeTerms) }}
+                        {{ form_label(registration_form.agreeTerms) }}
+                        {{ form_errors(registration_form.agreeTerms) }}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">S'inscrire</button>
+                    </div>
+                    
+                    {{ form_end(registration_form) }}
+                    
+                    <div class="mt-4 text-center">
+                        <p>Vous avez déjà un compte? <a href="{{ path('user_login') }}">Connectez-vous</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}Nos Catégories - SHOP BJ{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    {# Fil d'Ariane #}
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Catégories</li>
+        </ol>
+    </nav>
+    
+    <h1 class="text-center mb-5">Toutes nos catégories</h1>
+    
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-4 mb-4">
+                <div class="card category-card h-100">
+                    {% if category.imageFilename %}
+                        <a href="{{ path('category_show', {'id': category.id}) }}">
+                            <div class="category-image-container">
+                                <img src="{{ category.imageFilename }}" class="card-img-top" alt="{{ category.name }}" style="cursor: pointer;">
+                            </div>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('category_show', {'id': category.id}) }}">
+                            <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px; cursor: pointer;">
+                                <span class="text-center p-3 h4">{{ category.name }}</span>
+                            </div>
+                        </a>
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h3 class="card-title">{{ category.name }}</h3>
+                        {% if category.description %}
+                            <p class="card-text">{{ category.description|slice(0, 100) ~ (category.description|length > 100 ? '...' : '') }}</p>
+                        {% endif %}
+                        <a href="{{ path('category_show', {'id': category.id}) }}" class="btn btn-primary mt-2">Explorer</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center">
+                <p>Aucune catégorie trouvée.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .category-card {
+        transition: all 0.3s;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .category-image-container {
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .category-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .category-card:hover img {
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}
